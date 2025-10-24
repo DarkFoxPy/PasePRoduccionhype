@@ -172,27 +172,26 @@ export function ScheduleManager({ schedule, onChange, eventDurationDays }: Sched
 
   return (
     <div className="space-y-6">
-      {/* Header Actions */}
-      <div className="flex flex-wrap gap-3">
-        <GradientButton onClick={() => setShowForm(!showForm)} className="gap-2">
-          <Plus className="w-4 h-4" />
-          {showForm ? "Cancelar" : "Agregar Actividad"}
-        </GradientButton>
-
-        <label>
-          <input type="file" accept=".json" onChange={handleJsonUpload} className="hidden" />
-          <GradientButton variant="secondary" className="gap-2" as="span">
-            <Upload className="w-4 h-4" />
-            Importar JSON
+      {/* Header con título y botones alineados */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        {/* Título a la izquierda */}
+        <div>
+          <h2 className="text-3xl font-bold text-[#ffddff]">Cronograma de Actividades</h2>
+        </div>
+        
+        {/* Botones a la derecha */}
+        <div className="flex flex-wrap gap-3 justify-end">
+          <GradientButton onClick={() => setShowForm(!showForm)} className="gap-2">
+            <Plus className="w-4 h-4" />
+            {showForm ? "Cancelar" : "Agregar Actividad"}
           </GradientButton>
-        </label>
-
-        {schedule.length > 0 && (
-          <GradientButton variant="outline" onClick={handleExportJson} glow={false} className="gap-2">
-            <Download className="w-4 h-4" />
-            Exportar JSON
-          </GradientButton>
-        )}
+          {schedule.length > 0 && (
+            <GradientButton variant="outline" onClick={handleExportJson} glow={false} className="gap-2">
+              <Download className="w-4 h-4" />
+              Exportar JSON
+            </GradientButton>
+          )}
+        </div>
       </div>
 
       {/* Add/Edit Form */}

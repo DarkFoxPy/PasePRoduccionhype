@@ -195,21 +195,24 @@ export const useEventsStore = create<EventsState>((set, get) => ({
     }
   },
 
-  getEventById: async (id) => {
-    try {
-      const response = await fetch(`/api/events/${id}`)
+getEventById: async (id) => {
+  try {
+    console.log("[DEBUG] Fetching event by ID:", id)
+    const response = await fetch(`/api/events/${id}`)
 
-      if (!response.ok) {
-        return null
-      }
-
-      const { event } = await response.json()
-      return transformEvent(event)
-    } catch (error) {
-      console.error("[v0] Error fetching event by ID:", error)
+    if (!response.ok) {
+      console.log("[DEBUG] Failed to fetch event, status:", response.status)
       return null
     }
-  },
+
+    const { event } = await response.json()
+    console.log("[DEBUG] Event found:", event)
+    return transformEvent(event)
+  } catch (error) {
+    console.error("[v0] Error fetching event by ID:", error)
+    return null
+  }
+},
 
   getEventBySlug: async (slug) => {
     try {

@@ -5,7 +5,6 @@ import { useState } from "react"
 import { GlassCard } from "@/components/ui/glass-card"
 import { GradientButton } from "@/components/ui/gradient-button"
 import { X, User, Mail, Phone, Check } from "lucide-react"
-import toast from "react-hot-toast"
 import type { Event, FormField } from "@/lib/types"
 
 interface RegistrationModalProps {
@@ -67,7 +66,7 @@ export function RegistrationModal({ event, onClose, onSuccess }: RegistrationMod
       console.log("[v0] Registration completed successfully with data:", responseData)
 
       setStep(2)
-      toast.success("Registro exitoso")
+      // REMOVED: toast.success("Registro exitoso") - Esta línea causaba el "0"
 
       setTimeout(() => {
         onSuccess()
@@ -75,7 +74,8 @@ export function RegistrationModal({ event, onClose, onSuccess }: RegistrationMod
       }, 2000)
     } catch (error: any) {
       console.error("[v0] Error during registration:", error)
-      toast.error(error.message || "Error al registrarse")
+      // REMOVED: toast.error(error.message || "Error al registrarse") - También podría causar el "0"
+      alert(error.message || "Error al registrarse") // Usar alert temporalmente
     } finally {
       setLoading(false)
     }

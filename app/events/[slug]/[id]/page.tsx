@@ -96,7 +96,7 @@ export default function EventDetailPage() {
         <div className="flex min-h-screen items-center justify-center">
           <div className="text-center">
             <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-muted">Cargando evento...</p>
+            <p className="text-[#a0d2ff]">Cargando evento...</p>
           </div>
         </div>
       </FuturisticBackground>
@@ -108,8 +108,8 @@ export default function EventDetailPage() {
       <FuturisticBackground>
         <div className="flex min-h-screen items-center justify-center">
           <GlassCard className="text-center">
-            <h2 className="text-2xl font-bold text-foreground mb-2">Evento no encontrado</h2>
-            <p className="text-muted mb-4">El evento que buscas no existe o ha sido eliminado</p>
+            <h2 className="text-2xl font-bold text-[#ffddff] mb-2">Evento no encontrado</h2>
+            <p className="text-[#a0d2ff] mb-4">El evento que buscas no existe o ha sido eliminado</p>
             <Link href="/discover">
               <GradientButton>Explorar Eventos</GradientButton>
             </Link>
@@ -175,15 +175,16 @@ export default function EventDetailPage() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
 
+              {/* Texto con contorno blanco */}
               <div className="absolute bottom-6 left-6 right-6">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="px-3 py-1 rounded-full text-xs font-semibold bg-primary/20 text-primary border border-primary/30">
+                      <span className="px-3 py-1 rounded-full text-xs font-semibold bg-primary/20 text-primary border border-primary/30 [text-shadow:_0_1px_0_rgb(255_255_255_/_40%),_0_-1px_0_rgb(255_255_255_/_40%),_1px_0_0_rgb(255_255_255_/_40%),_-1px_0_0_rgb(255_255_255_/_40%)]">
                         {event.category}
                       </span>
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                        className={`px-3 py-1 rounded-full text-xs font-semibold [text-shadow:_0_1px_0_rgb(255_255_255_/_40%),_0_-1px_0_rgb(255_255_255_/_40%),_1px_0_0_rgb(255_255_255_/_40%),_-1px_0_0_rgb(255_255_255_/_40%)] ${
                           event.status === "published"
                             ? "bg-success/20 text-success border border-success/30"
                             : "bg-warning/20 text-warning border border-warning/30"
@@ -192,13 +193,17 @@ export default function EventDetailPage() {
                         {event.status === "published" ? "Publicado" : "Borrador"}
                       </span>
                       {eventEnded && (
-                        <span className="px-3 py-1 rounded-full text-xs font-semibold bg-error/20 text-error border border-error/30">
+                        <span className="px-3 py-1 rounded-full text-xs font-semibold bg-error/20 text-error border border-error/30 [text-shadow:_0_1px_0_rgb(255_255_255_/_40%),_0_-1px_0_rgb(255_255_255_/_40%),_1px_0_0_rgb(255_255_255_/_40%),_-1px_0_0_rgb(255_255_255_/_40%)]">
                           Finalizado
                         </span>
                       )}
                     </div>
-                    <h1 className="text-4xl font-bold text-foreground mb-2">{event.title}</h1>
-                    <p className="text-muted max-w-2xl">{event.description}</p>
+                    <h1 className="text-4xl font-bold text-[#ffddff] mb-2 [text-shadow:_0_1px_0_rgb(255_255_255_/_40%),_0_-1px_0_rgb(255_255_255_/_40%),_1px_0_0_rgb(255_255_255_/_40%),_-1px_0_0_rgb(255_255_255_/_40%)]">
+                      {event.title}
+                    </h1>
+                    <p className="text-[#a0d2ff] max-w-2xl [text-shadow:_0_1px_0_rgb(255_255_255_/_40%),_0_-1px_0_rgb(255_255_255_/_40%),_1px_0_0_rgb(255_255_255_/_40%),_-1px_0_0_rgb(255_255_255_/_40%)]">
+                      {event.description}
+                    </p>
                   </div>
 
                   <div className="flex gap-2">
@@ -227,8 +232,8 @@ export default function EventDetailPage() {
                     <Calendar className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <p className="text-xs text-muted">Fecha Inicio</p>
-                    <p className="font-semibold text-foreground">
+                    <p className="text-xs text-[#a0d2ff]">Fecha Inicio</p>
+                    <p className="font-semibold text-[#ffffff]">
                       {new Date(event.startDate).toLocaleDateString("es-ES", {
                         day: "numeric",
                         month: "short",
@@ -245,8 +250,8 @@ export default function EventDetailPage() {
                     <Calendar className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <p className="text-xs text-muted">Fecha Fin</p>
-                    <p className="font-semibold text-foreground">
+                    <p className="text-xs text-[#a0d2ff]">Fecha Fin</p>
+                    <p className="font-semibold text-[#ffffff]">
                       {new Date(event.endDate).toLocaleDateString("es-ES", {
                         day: "numeric",
                         month: "short",
@@ -263,8 +268,8 @@ export default function EventDetailPage() {
                     <MapPin className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <p className="text-xs text-muted">Ubicación</p>
-                    <p className="font-semibold text-foreground line-clamp-1">{event.location}</p>
+                    <p className="text-xs text-[#a0d2ff]">Ubicación</p>
+                    <p className="font-semibold text-[#ffffff] line-clamp-1">{event.location}</p>
                   </div>
                 </div>
               </GlassCard>
@@ -275,8 +280,8 @@ export default function EventDetailPage() {
                     <Users className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <p className="text-xs text-muted">Disponibles</p>
-                    <p className="font-semibold text-foreground">
+                    <p className="text-xs text-[#a0d2ff]">Disponibles</p>
+                    <p className="font-semibold text-[#ffffff]">
                       {availableSpots} / {event.capacity}
                     </p>
                   </div>
@@ -288,11 +293,11 @@ export default function EventDetailPage() {
               <GlassCard>
                 <div className="flex items-center gap-3 mb-4">
                   <Info className="w-6 h-6 text-primary" />
-                  <h2 className="text-2xl font-bold gradient-text">Acerca del Evento</h2>
+                  <h2 className="text-2xl font-bold text-[#ffddff]">Acerca del Evento</h2>
                 </div>
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="text-sm text-muted">Tipo de Evento:</span>
+                    <span className="text-sm text-[#a0d2ff]">Tipo de Evento:</span>
                     <span className="px-3 py-1 rounded-full text-sm font-semibold bg-primary/20 text-primary border border-primary/30">
                       {event.eventType === "presencial"
                         ? "Presencial"
@@ -301,7 +306,7 @@ export default function EventDetailPage() {
                           : "No Definido"}
                     </span>
                   </div>
-                  <p className="text-foreground leading-relaxed whitespace-pre-wrap">{event.aboutEvent}</p>
+                  <p className="text-[#ffffff] leading-relaxed whitespace-pre-wrap">{event.aboutEvent}</p>
                 </div>
               </GlassCard>
             )}
@@ -310,8 +315,8 @@ export default function EventDetailPage() {
               <GlassCard>
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-lg font-bold text-foreground mb-1">Ubicación en Google Maps</h3>
-                    <p className="text-sm text-muted">Encuentra cómo llegar al evento</p>
+                    <h3 className="text-lg font-bold text-[#ffffff] mb-1">Ubicación en Google Maps</h3>
+                    <p className="text-sm text-[#a0d2ff]">Encuentra cómo llegar al evento</p>
                   </div>
                   <a href={event.eventLink} target="_blank" rel="noopener noreferrer">
                     <GradientButton className="gap-2">
@@ -327,8 +332,8 @@ export default function EventDetailPage() {
               <GlassCard>
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-lg font-bold text-foreground mb-1">Enlace de Reunión Virtual</h3>
-                    <p className="text-sm text-muted">Únete al evento en línea</p>
+                    <h3 className="text-lg font-bold text-[#ffffff] mb-1">Enlace de Reunión Virtual</h3>
+                    <p className="text-sm text-[#a0d2ff]">Únete al evento en línea</p>
                   </div>
                   <a href={event.eventLink} target="_blank" rel="noopener noreferrer">
                     <GradientButton className="gap-2">
@@ -344,12 +349,12 @@ export default function EventDetailPage() {
               <GlassCard>
                 <div className="flex items-center gap-3 mb-6">
                   <ImageIcon className="w-6 h-6 text-primary" />
-                  <h2 className="text-2xl font-bold gradient-text">Galería</h2>
+                  <h2 className="text-2xl font-bold text-[#ffddff]">Galería</h2>
                 </div>
 
                 {event.galleryImages && event.galleryImages.length > 0 && (
                   <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
+                    <h3 className="text-lg font-semibold text-[#ffffff] mb-3 flex items-center gap-2">
                       <ImageIcon className="w-5 h-5" />
                       Imágenes
                     </h3>
@@ -372,7 +377,7 @@ export default function EventDetailPage() {
 
                 {event.videos && event.videos.length > 0 && (
                   <div>
-                    <h3 className="text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
+                    <h3 className="text-lg font-semibold text-[#ffffff] mb-3 flex items-center gap-2">
                       <Video className="w-5 h-5" />
                       Videos
                     </h3>
@@ -404,7 +409,7 @@ export default function EventDetailPage() {
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <CalendarDays className="w-6 h-6 text-primary" />
-                    <h2 className="text-2xl font-bold gradient-text">Cronograma del Evento</h2>
+                    <h2 className="text-2xl font-bold text-[#ffddff]">Cronograma del Evento</h2>
                   </div>
                   {isOrganizer && (
                     <Link href={`/events/${event.slug}/${event.id}/schedule`}>
@@ -424,8 +429,8 @@ export default function EventDetailPage() {
                 <div className="p-6 border-b border-border/50">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <h2 className="text-2xl font-bold gradient-text">Explora el Espacio en 3D</h2>
-                      <p className="text-muted mt-1">Haz click derecho en los objetos para ver detalles completos</p>
+                      <h2 className="text-2xl font-bold text-[#ffddff]">Explora el Espacio en 3D</h2>
+                      <p className="text-[#a0d2ff] mt-1">Haz click derecho en los objetos para ver detalles completos</p>
                     </div>
                   </div>
 
@@ -439,7 +444,7 @@ export default function EventDetailPage() {
                           className={`px-4 py-2 rounded-lg font-medium transition-all ${
                             currentFloor === floor
                               ? "bg-gradient-to-r from-[#f1c6ff] to-[#ffddff] text-[#1e1732] font-semibold"
-                              : "bg-[#2a1f3d]/50 text-[#e2e2e2] hover:bg-[#2a1f3d] border border-[#f1c6ff]/20"
+                              : "bg-[#2a1f3d]/50 text-[#ffffff] hover:bg-[#2a1f3d] border border-[#f1c6ff]/20"
                           }`}
                         >
                           <Layers className="w-4 h-4 inline mr-2" />
@@ -470,8 +475,8 @@ export default function EventDetailPage() {
               <GlassCard className="bg-gradient-to-r from-primary/10 via-secondary/10 to-accent-pink/10">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                   <div className="flex-1">
-                    <h3 className="text-2xl font-bold text-foreground mb-2">¿Listo para asistir?</h3>
-                    <p className="text-muted">
+                    <h3 className="text-2xl font-bold text-[#ffffff] mb-2">¿Listo para asistir?</h3>
+                    <p className="text-[#a0d2ff]">
                       Regístrate ahora y asegura tu lugar en este increíble evento. Quedan {availableSpots} lugares
                       disponibles.
                     </p>
@@ -488,34 +493,45 @@ export default function EventDetailPage() {
               </GlassCard>
             )}
 
-            {/* Organizer Actions */}
+            {/* Organizer Actions - BOTONES MEJORADOS */}
             {isOrganizer && (
-              <GlassCard>
-                <h3 className="text-xl font-bold text-foreground mb-4">Acciones del Organizador</h3>
-                <div className="flex flex-wrap gap-3">
-                  <Link href={`/events/${event.slug}/${event.id}/schedule`}>
-                    <GradientButton variant="secondary" className="gap-2">
-                      <CalendarDays className="w-4 h-4" />
-                      Gestionar Cronograma
-                    </GradientButton>
+              <GlassCard className="border-2 border-[#f1c6ff]/30 bg-gradient-to-br from-[#1e1732]/80 to-[#2a1f3d]/80">
+                <h3 className="text-2xl font-bold text-[#ffddff] mb-6 text-center [text-shadow:_0_2px_4px_rgb(0_0_0_/_50%)]">
+                  Acciones del Organizador
+                </h3>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center items-stretch">
+                  {/* Botón Gestionar Cronograma */}
+                  <Link href={`/events/${event.slug}/${event.id}/schedule`} className="flex-1 min-w-[200px]">
+                    <button className="w-full h-full px-6 py-4 rounded-xl bg-gradient-to-r from-[#f1c6ff] to-[#ffddff] text-[#1e1732] font-bold hover:shadow-2xl hover:shadow-[#f1c6ff]/60 transition-all duration-300 flex flex-col items-center justify-center gap-3 border-2 border-white/20 hover:border-white/40">
+                      <CalendarDays className="w-6 h-6" />
+                      <span className="text-center">Gestionar Cronograma</span>
+                    </button>
                   </Link>
+
+                  {/* Botón Ver Respuestas del Formulario */}
                   {event.hasCustomForm && (
-                    <Link href={`/events/${event.slug}/${event.id}/form-responses`}>
-                      <GradientButton variant="secondary" className="gap-2">
-                        <Users className="w-4 h-4" />
-                        Ver Respuestas del Formulario
-                      </GradientButton>
+                    <Link href={`/events/${event.slug}/${event.id}/form-responses`} className="flex-1 min-w-[200px]">
+                      <button className="w-full h-full px-6 py-4 rounded-xl bg-gradient-to-r from-[#f1c6ff] to-[#ffddff] text-[#1e1732] font-bold hover:shadow-2xl hover:shadow-[#f1c6ff]/60 transition-all duration-300 flex flex-col items-center justify-center gap-3 border-2 border-white/20 hover:border-white/40">
+                        <Users className="w-6 h-6" />
+                        <span className="text-center">Ver Respuestas del Formulario</span>
+                      </button>
                     </Link>
                   )}
-                  <Link href={`/events/${event.slug}/${event.id}/edit`}>
-                    <GradientButton variant="outline" glow={false} className="gap-2">
-                      <Edit className="w-4 h-4" />
-                      Editar Evento
-                    </GradientButton>
+
+                  {/* Botón Editar Evento */}
+                  <Link href={`/events/${event.slug}/${event.id}/edit`} className="flex-1 min-w-[200px]">
+                    <button className="w-full h-full px-6 py-4 rounded-xl bg-gradient-to-r from-[#f1c6ff] to-[#ffddff] text-[#1e1732] font-bold hover:shadow-2xl hover:shadow-[#f1c6ff]/60 transition-all duration-300 flex flex-col items-center justify-center gap-3 border-2 border-white/20 hover:border-white/40">
+                      <Edit className="w-6 h-6" />
+                      <span className="text-center">Editar Evento</span>
+                    </button>
                   </Link>
-                  <div className="ml-auto text-sm text-muted flex items-center gap-2">
+                </div>
+
+                {/* Contador de visitas */}
+                <div className="mt-6 pt-4 border-t border-[#f1c6ff]/20 flex justify-center">
+                  <div className="text-sm text-[#a0d2ff] flex items-center gap-2 bg-[#1e1732]/50 px-4 py-2 rounded-lg">
                     <Users className="w-4 h-4" />
-                    {event.visitCount} visitas
+                    <span className="font-semibold">{event.visitCount}</span> visitas
                   </div>
                 </div>
               </GlassCard>

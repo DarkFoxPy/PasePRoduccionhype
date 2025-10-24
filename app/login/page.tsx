@@ -50,13 +50,17 @@ export default function LoginPage() {
 
         <div className="w-full max-w-md relative z-10">
           {/* Logo */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-[#f1c6ff] to-[#ffddff] glow-primary mb-4 animate-float">
-              <Sparkles className="w-10 h-10 text-[#1e1732]" />
-            </div>
-            <h1 className="text-4xl font-bold gradient-text mb-2">HYPE</h1>
-            <p className="text-[#b8a3ff]">Experiencias inmersivas en eventos</p>
-          </div>
+<div className="text-center mb-8">
+  <div className="inline-flex items-center justify-center w-32 h-32 rounded-2xl bg-gradient-to-br from-[#f1c6ff] to-[#ffddff] glow-primary mb-4 animate-float p-0.1">
+    <img 
+      src="/logo-hype.png" 
+      alt="HYPE Logo" 
+      className="w-full h-full object-contain"
+    />
+  </div>
+   <h1 className="text-4xl font-bold gradient-text mb-2"> HYPE </h1>
+  <p className="text-[#e2e2e2]">Experiencias inmersivas en eventos</p>
+</div>
 
           {/* Login Form */}
           <GlassCard className="space-y-6" glow="primary">

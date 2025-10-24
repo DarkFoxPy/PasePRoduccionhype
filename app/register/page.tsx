@@ -15,7 +15,7 @@ export default function RegisterPage() {
   const router = useRouter()
   const { register } = useAuthStore()
   const [loading, setLoading] = useState(false)
-  const [accountType, setAccountType] = useState<"participant" | "coordinator">("participant")
+  const [accountType, setAccountType] = useState<"participant" | "coordinator">("coordinator")
   const [profilePicture, setProfilePicture] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     name: "",
@@ -86,11 +86,15 @@ export default function RegisterPage() {
       <div className="min-h-screen flex items-center justify-center p-4 relative">
         <div className="w-full max-w-2xl relative z-10">
           {/* Logo */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-[#f1c6ff] to-[#ffddff] glow-secondary mb-4 animate-float">
-              <Sparkles className="w-10 h-10 text-[#1e1732]" />
-            </div>
-            <h1 className="text-4xl font-bold gradient-text mb-2">HYPE</h1>
+<div className="text-center mb-8">
+  <div className="inline-flex items-center justify-center w-32 h-32 rounded-2xl bg-gradient-to-br from-[#f1c6ff] to-[#ffddff] glow-primary mb-4 animate-float p-0.1">
+    <img 
+      src="/logo-hype.png" 
+      alt="HYPE Logo" 
+      className="w-full h-full object-contain"
+    />
+  </div>
+   <h1 className="text-4xl font-bold gradient-text mb-2"> HYPE </h1>
             <p className="text-[#e2e2e2]">Crea tu cuenta y comienza</p>
           </div>
 
@@ -105,19 +109,20 @@ export default function RegisterPage() {
             <div className="space-y-3">
               <label className="block text-sm font-medium text-[#ffddff]">Tipo de Cuenta</label>
               <div className="grid grid-cols-2 gap-4">
-                <button
-                  type="button"
-                  onClick={() => setAccountType("participant")}
-                  className={`p-4 rounded-xl border-2 transition-all ${
-                    accountType === "participant"
-                      ? "border-[#f1c6ff] bg-[#f1c6ff]/20"
-                      : "border-[#f1c6ff]/20 bg-[#1e1732]/50 hover:border-[#f1c6ff]/40"
-                  }`}
-                >
-                  <User className="w-8 h-8 mx-auto mb-2 text-[#f1c6ff]" />
-                  <p className="font-semibold text-[#ffddff]">Participante</p>
-                  <p className="text-xs text-[#78767b] mt-1">Asiste a eventos</p>
-                </button>
+<button
+  type="button"
+  onClick={() => setAccountType("participant")}
+  disabled
+  className={`p-4 rounded-xl border-2 transition-all ${
+    accountType === "participant"
+      ? "border-[#f1c6ff] bg-[#f1c6ff]/20"
+      : "border-[#f1c6ff]/20 bg-[#1e1732]/50 hover:border-[#f1c6ff]/40"
+  } opacity-50 cursor-not-allowed`}
+>
+  <User className="w-8 h-8 mx-auto mb-2 text-[#f1c6ff]" />
+  <p className="font-semibold text-[#ffddff]">Participante</p>
+  <p className="text-xs text-[#78767b] mt-1">Asiste a eventos</p>
+</button>
                 <button
                   type="button"
                   onClick={() => setAccountType("coordinator")}

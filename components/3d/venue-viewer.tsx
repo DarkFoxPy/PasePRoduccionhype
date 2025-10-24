@@ -91,7 +91,7 @@ function ViewerMarker({ marker, onClick }: ViewerMarkerProps) {
                 Capacidad: <span className="text-[#f1c6ff] font-semibold">{marker.capacity}</span>
               </p>
             )}
-            <p className="text-xs text-[#f1c6ff] mt-2 font-medium">Click derecho para más detalles</p>
+            <p className="text-xs text-[#f00ff] mt-2 font-medium">Click derecho para más detalles</p>
           </div>
         </Html>
       )}
@@ -303,10 +303,10 @@ export function VenueViewer({
         {/* Overlay UI */}
         <div className="absolute bottom-4 left-4 right-4 flex justify-center pointer-events-none">
           <div className="glass px-6 py-3 rounded-full border border-border/50 pointer-events-auto">
-            <p className="text-sm text-muted">
-              <span className="font-semibold text-primary">Click izquierdo</span> para rotar •{" "}
-              <span className="font-semibold text-secondary">Scroll</span> para zoom •{" "}
-              <span className="font-semibold text-accent-pink">Click derecho</span> en objetos para detalles
+            <p className="text-sm text-white">
+              <span className="font-semibold text-[#ff00ff]">Click izquierdo</span> para rotar •{" "}
+              <span className="font-semibold text-[#ff00ff]">Scroll</span> para zoom •{" "}
+              <span className="font-semibold text-[#ff00ff]">Click derecho</span> en objetos para detalles
             </p>
           </div>
         </div>

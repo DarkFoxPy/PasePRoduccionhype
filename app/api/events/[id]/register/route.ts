@@ -32,7 +32,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     // Check capacity
     if (!event.unlimited_capacity) {
       const registrationCount = db
-        .prepare("SELECT COUNT(*) as count FROM registrations WHERE event_id = ?")
+        .prepare("SELECT COUNT(*) as count FROM registrations WHERE event_id = ? AND status != 'cancelled'")
         .get(id) as any
 
       if (registrationCount.count >= event.capacity) {
@@ -55,13 +55,28 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       userEmail,
       phone || null,
       event.requires_approval ? "pending" : "approved",
-      customFormData ? JSON.stringify(customFormData) : null,
+      customFormData ? JSON.stringify(customFormData) : "{}",
       new Date().toISOString(),
     )
 
-    console.log("[v0] User registered for event successfully")
+    // Actualizar contador de registros en events
+    db.prepare(`
+      UPDATE events 
+      SET registrations = (
+        SELECT COUNT(*) 
+        FROM registrations 
+        WHERE event_id = ? AND status IN ('approved', 'pending')
+      )
+      WHERE id = ?
+    `).run(id, id)
 
-    return NextResponse.json({ success: true, registrationId })
+    console.log("[v0] User registered for event successfully. Registration ID:", registrationId)
+
+    return NextResponse.json({ 
+      success: true, 
+      registrationId,
+      status: event.requires_approval ? "pending" : "approved"
+    })
   } catch (error) {
     console.error("[v0] Error registering for event:", error)
     return NextResponse.json({ error: "Failed to register for event" }, { status: 500 })

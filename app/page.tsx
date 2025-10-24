@@ -1253,16 +1253,21 @@ export default function Home() {
         }`}
       >
         <div className="container mx-auto px-6 h-20 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3 group cursor-pointer">
-            <div className="relative">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#f1c6ff] to-[#ffddff] rotate-45 group-hover:rotate-[405deg] transition-all duration-700 ease-out" />
-              <div className="absolute inset-0 w-10 h-10 rounded-xl bg-[#f1c6ff] opacity-40 blur-lg group-hover:opacity-70 group-hover:blur-xl transition-all duration-500" />
-              <Sparkles className="absolute inset-0 m-auto w-5 h-5 text-[#1e1732] animate-pulse" />
-            </div>
-            <span className="text-2xl font-black bg-gradient-to-r from-[#f1c6ff] via-[#ffddff] to-[#f1c6ff] bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
-              HYPE
-            </span>
-          </Link>
+<Link href="/" className="flex items-center gap-3 group cursor-pointer">
+  <div className="relative w-10 h-10">
+    <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-[#f1c6ff] to-[#ffddff] opacity-40 blur-lg group-hover:opacity-70 group-hover:blur-xl transition-all duration-500" />
+    <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-[#f1c6ff] to-[#ffddff] p-1 group-hover:scale-110 transition-all duration-700">
+      <img 
+        src="/logo-hype.png" 
+        alt="HYPE Logo" 
+        className="w-full h-full object-contain"
+      />
+    </div>
+  </div>
+  <span className="text-2xl font-black bg-gradient-to-r from-[#f1c6ff] via-[#ffddff] to-[#f1c6ff] bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
+    HYPE
+  </span>
+</Link>
 
           <nav className="hidden md:flex items-center gap-8">
             {[
@@ -1359,10 +1364,10 @@ export default function Home() {
               </span>
             </h1>
 
-            <p className="text-xl md:text-2xl text-[#78767b] max-w-3xl mx-auto leading-relaxed">
-              La plataforma <span className="text-[#f1c6ff] font-semibold">futurista</span> que transforma la gestión de
+            <p className="text-xl md:text-2xl text-[#ffddff] max-w-3xl mx-auto leading-relaxed">
+              La plataforma <span className="text-[#FF00FF] font-semibold">futurista</span> que transforma la gestión de
               eventos con espacios 3D interactivos, diseño inmersivo y experiencias{" "}
-              <span className="text-[#ffddff] font-semibold">inolvidables</span>.
+              <span className="text-[#FF00FF] font-semibold">inolvidables</span>.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-5 pt-6">
@@ -1412,8 +1417,8 @@ export default function Home() {
             <h2 className="text-5xl md:text-7xl font-black mb-6 bg-gradient-to-r from-[#f1c6ff] via-[#ffddff] to-[#f1c6ff] bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
               Características Épicas
             </h2>
-            <p className="text-[#78767b] text-xl">
-              Todo lo que necesitas para crear eventos <span className="text-[#f1c6ff]">legendarios</span>
+            <p className="text-[#ffddff] text-xl">
+              Todo lo que necesitas para crear eventos <span className="text-[#ff00ff]">legendarios</span>
             </p>
           </div>
 
@@ -1454,8 +1459,8 @@ export default function Home() {
             <h2 className="text-5xl md:text-7xl font-black mb-6 bg-gradient-to-r from-[#f1c6ff] to-[#ffddff] bg-clip-text text-transparent">
               Tres Pasos Mágicos
             </h2>
-            <p className="text-[#78767b] text-xl">
-              Crea eventos <span className="text-[#f1c6ff] font-bold">increíbles</span> en minutos
+            <p className="text-[#f1c6ff] text-xl">
+              Crea eventos <span className="text-[#f100ff] font-bold">increíbles</span> en minutos
             </p>
           </div>
 
@@ -1499,17 +1504,24 @@ export default function Home() {
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#f1c6ff] to-transparent animate-shimmer" />
 
               <div className="relative z-10">
-                <div className="flex justify-center gap-3 mb-6">
-                  <Star className="w-8 h-8 text-[#f1c6ff] animate-pulse" />
-                  <Star className="w-10 h-10 text-[#ffddff] animate-pulse" />
-                  <Star className="w-8 h-8 text-[#f1c6ff] animate-pulse" />
-                </div>
+   <div className="flex justify-center mb-6">
+  <div className="relative w-20 h-20">
+    <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#f1c6ff] to-[#ffddff] opacity-50 blur-xl animate-pulse" />
+    <div className="relative w-20 h-20 rounded-2xl bg-gradient-to-br from-[#f1c6ff] to-[#ffddff] p-0.1 animate-float">
+      <img 
+        src="/logo-hype.png" 
+        alt="HYPE Logo" 
+        className="w-full h-full object-contain"
+      />
+    </div>
+  </div>
+</div>
 
                 <h2 className="text-5xl md:text-7xl font-black mb-6 bg-gradient-to-r from-[#f1c6ff] via-[#ffddff] to-[#f1c6ff] bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
                   ¡El Futuro es Ahora!
                 </h2>
-                <p className="text-[#78767b] text-xl mb-10 max-w-2xl mx-auto">
-                  Únete a la <span className="text-[#f1c6ff] font-bold">revolución</span> de eventos 3D
+                <p className="text-[#f1c6ff] text-xl mb-10 max-w-2xl mx-auto">
+                  Únete a la <span className="text-[#ff00ff] font-bold">revolución</span> de eventos 3D
                 </p>
                 <Link href="/register">
                   <button className="group relative px-10 py-5 rounded-full bg-gradient-to-r from-[#f1c6ff] to-[#ffddff] text-[#1e1732] font-bold text-xl overflow-hidden transform hover:scale-110 transition-all duration-300">
@@ -1531,10 +1543,16 @@ export default function Home() {
         <div className="container mx-auto max-w-7xl">
           <div className="grid md:grid-cols-4 gap-12 mb-12">
             <div>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#f1c6ff] to-[#ffddff] rotate-45" />
-                <span className="font-bold text-xl text-[#e2e2e2]">HYPE</span>
-              </div>
+<div className="flex items-center gap-3 mb-4">
+  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#f1c6ff] to-[#ffddff] p-1">
+    <img 
+      src="/logo-hype.png" 
+      alt="HYPE Logo" 
+      className="w-full h-full object-contain"
+    />
+  </div>
+  <span className="font-bold text-xl text-[#e2e2e2]">HYPE</span>
+</div>
               <p className="text-[#78767b]">Gestión de eventos con visualización 3D inmersiva</p>
             </div>
 

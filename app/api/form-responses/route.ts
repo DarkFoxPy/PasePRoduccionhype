@@ -39,6 +39,8 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const eventId = searchParams.get("eventId")
 
+    console.log("[DEBUG] Fetching registrations for event:", eventId)
+
     if (!eventId) {
       return NextResponse.json({ error: "Event ID required" }, { status: 400 })
     }
@@ -48,46 +50,54 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    // Verify user is the event organizer
-    const event = db.prepare("SELECT organizer_id FROM events WHERE id = ?").get(eventId) as any
+    // Verify event exists and user is the organizer
+    const event = db.prepare("SELECT id, organizer_id, title FROM events WHERE id = ?").get(eventId) as any
 
     if (!event) {
+      console.log("[DEBUG] Event not found for ID:", eventId)
       return NextResponse.json({ error: "Event not found" }, { status: 404 })
     }
 
+    console.log("[DEBUG] Event found:", event.title, "Organizer:", event.organizer_id, "User:", user.id)
+
     if (event.organizer_id !== user.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 })
+      return NextResponse.json({ error: "Unauthorized - Not event organizer" }, { status: 403 })
     }
 
-    // Get all responses for this event with registration data
-    const responses = db
+    const registrations = db
       .prepare(`
       SELECT 
-        fr.id,
-        fr.event_id,
-        fr.registration_id,
-        fr.user_id,
-        fr.responses,
-        fr.submitted_at,
-        r.user_name,
-        r.user_email,
-        r.phone
-      FROM form_responses fr
-      LEFT JOIN registrations r ON fr.registration_id = r.id
-      WHERE fr.event_id = ?
-      ORDER BY fr.submitted_at DESC
+        id,
+        event_id,
+        user_id,
+        user_name,
+        user_email,
+        phone,
+        status,
+        custom_answers,
+        registered_at
+      FROM registrations
+      WHERE event_id = ?
+      ORDER BY registered_at DESC
     `)
       .all(eventId)
 
-    // Parse JSON responses
-    const parsedResponses = responses.map((r: any) => ({
+    console.log("[DEBUG] Raw registrations from DB:", registrations)
+
+    // Parse custom_answers JSON
+    const parsedRegistrations = registrations.map((r: any) => ({
       ...r,
-      responses: JSON.parse(r.responses),
+      responses: r.custom_answers ? (typeof r.custom_answers === 'string' ? JSON.parse(r.custom_answers) : r.custom_answers) : {},
     }))
 
-    return NextResponse.json({ responses: parsedResponses })
+    console.log("[DEBUG] Parsed registrations:", parsedRegistrations)
+
+    return NextResponse.json({ 
+      responses: parsedRegistrations,
+      event: { title: event.title }
+    })
   } catch (error) {
-    console.error("[v0] Error fetching form responses:", error)
-    return NextResponse.json({ error: "Failed to fetch form responses" }, { status: 500 })
+    console.error("[v0] Error fetching registrations:", error)
+    return NextResponse.json({ error: "Failed to fetch registrations" }, { status: 500 })
   }
 }

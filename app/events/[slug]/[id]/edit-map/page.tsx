@@ -2549,35 +2549,6 @@ export default function EditMapPage() {
 
       {/* Panel Lateral Izquierdo */}
       <div className="w-80 bg-[#1e1732]/95 backdrop-blur-2xl border-r border-[#f1c6ff]/30 p-4 overflow-y-auto relative z-10">
-        <div className="mb-4 space-y-2">
-          {/* Volver a Editar Evento */}
-          <a
-            href={`/events/${slug}/${eventId}/edit`}
-            className="group relative w-full px-4 py-2 rounded-xl bg-gradient-to-r from-[#f1c6ff]/20 to-[#ffddff]/20 border border-[#f1c6ff]/30 text-[#e2e2e2] font-bold text-sm overflow-hidden transform hover:scale-105 hover:border-[#f1c6ff]/60 transition-all duration-300 flex items-center justify-center gap-2"
-          >
-            <span className="relative z-10 flex items-center gap-2">← Volver a Editar Evento</span>
-            <div className="absolute inset-0 bg-gradient-to-r from-[#f1c6ff]/0 to-[#ffddff]/0 group-hover:from-[#f1c6ff]/30 group-hover:to-[#ffddff]/30 transition-all duration-500" />
-          </a>
-
-          {/* Ver Evento */}
-          <a
-            href={`/events/${slug}/${eventId}`}
-            className="group relative w-full px-4 py-2 rounded-xl bg-gradient-to-r from-[#a78bfa]/20 to-[#c4b5fd]/20 border border-[#a78bfa]/30 text-[#e2e2e2] font-bold text-sm overflow-hidden transform hover:scale-105 hover:border-[#a78bfa]/60 transition-all duration-300 flex items-center justify-center gap-2"
-          >
-            <span className="relative z-10 flex items-center gap-2">👁️ Ver Evento</span>
-            <div className="absolute inset-0 bg-gradient-to-r from-[#a78bfa]/0 to-[#c4b5fd]/0 group-hover:from-[#a78bfa]/30 group-hover:to-[#c4b5fd]/30 transition-all duration-500" />
-          </a>
-
-          {/* Mis Eventos */}
-          <a
-            href="/events"
-            className="group relative w-full px-4 py-2 rounded-xl bg-gradient-to-r from-[#78767b]/20 to-[#9ca3af]/20 border border-[#78767b]/30 text-[#e2e2e2] font-bold text-sm overflow-hidden transform hover:scale-105 hover:border-[#78767b]/60 transition-all duration-300 flex items-center justify-center gap-2"
-          >
-            <span className="relative z-10 flex items-center gap-2">📋 Mis Eventos</span>
-            <div className="absolute inset-0 bg-gradient-to-r from-[#78767b]/0 to-[#9ca3af]/0 group-hover:from-[#78767b]/30 group-hover:to-[#9ca3af]/30 transition-all duration-500" />
-          </a>
-        </div>
-
         <h2 className="text-2xl font-black mb-4 bg-gradient-to-r from-[#f1c6ff] via-[#ffddff] to-[#f1c6ff] bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
           Editor de Mapa 3D
         </h2>

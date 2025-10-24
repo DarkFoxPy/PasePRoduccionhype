@@ -34,16 +34,20 @@ export function Sidebar() {
         {/* Logo */}
         <div className="p-6 border-b border-[#f1c6ff]/30">
           <div className="flex items-center justify-between">
-            <Link href="/dashboard" className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#f1c6ff] to-[#ffddff] flex items-center justify-center shadow-lg shadow-[#f1c6ff]/50">
-                <Sparkles className="w-6 h-6 text-[#1e1732]" />
+           <Link href="/" className="flex items-center gap-3 group cursor-pointer">
+              <div className="relative w-10 h-10">
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-[#f1c6ff] to-[#ffddff] opacity-40 blur-lg group-hover:opacity-70 group-hover:blur-xl transition-all duration-500" />
+                <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-[#f1c6ff] to-[#ffddff] p-1 group-hover:scale-110 transition-all duration-700">
+                  <img 
+                    src="/logo-hype.png" 
+                    alt="HYPE Logo" 
+                    className="w-full h-full object-contain"
+                  />
+                </div>
               </div>
-              <div>
-                <h1 className="text-xl font-bold bg-gradient-to-r from-[#f1c6ff] to-[#ffddff] bg-clip-text text-transparent">
-                  HYPE
-                </h1>
-                <p className="text-xs text-white">3D Immersive</p>
-              </div>
+              <span className="text-2xl font-black bg-gradient-to-r from-[#f1c6ff] via-[#ffddff] to-[#f1c6ff] bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
+                HYPE
+              </span>
             </Link>
             <button
               onClick={() => setSidebarOpen(false)}

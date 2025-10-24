@@ -105,11 +105,11 @@ function ViewerMarker({ marker, onClick }: { marker: Marker3D; onClick: () => vo
         <Html position={[0, 3, 0]} center distanceFactor={10}>
           <div className="bg-[#1e1732]/95 backdrop-blur-sm border border-[#f1c6ff]/50 rounded-lg p-4 min-w-[250px] max-w-[350px] shadow-xl">
             <h4 className="text-[#ffddff] font-bold text-base mb-2">{marker.name}</h4>
-            {marker.description && <p className="text-[#e2e2e2] text-sm mb-3 leading-relaxed">{marker.description}</p>}
+            {marker.description && <p className="text-[#ffffff] text-sm mb-3 leading-relaxed">{marker.description}</p>}
             {marker.capacity && (
               <div className="flex items-center gap-2">
                 <Users className="w-4 h-4 text-[#f1c6ff]" />
-                <span className="text-[#b8a3ff]">Capacidad:</span>
+                <span className="text-[#a0d2ff]">Capacidad:</span>
                 <span className="text-[#f1c6ff] font-semibold">{marker.capacity}</span>
               </div>
             )}
@@ -263,6 +263,17 @@ export default function EventDetailPage() {
           const data = await response.json()
           setEvent(data.event)
           console.log("[v0] Event loaded:", data.event)
+          
+          // DEBUG: Verificar campos disponibles
+          console.log("🔍 DEBUG - Available event fields:", {
+            id: data.event.id,
+            title: data.event.title,
+            capacity: data.event.capacity,
+            max_attendees: data.event.max_attendees,
+            registrations: data.event.registrations,
+            registrations_count: data.event.registrations_count,
+            allFields: Object.keys(data.event).sort()
+          })
 
           const start = new Date(data.event.start_date)
           const end = new Date(data.event.end_date)
@@ -350,7 +361,7 @@ export default function EventDetailPage() {
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#f1c6ff] mx-auto mb-4"></div>
-            <p className="text-white">Cargando evento...</p>
+            <p className="text-[#a0d2ff]">Cargando evento...</p>
           </div>
         </div>
       </FuturisticBackground>
@@ -363,7 +374,7 @@ export default function EventDetailPage() {
         <div className="min-h-screen flex items-center justify-center">
           <GlassCard className="text-center max-w-md">
             <h2 className="text-2xl font-bold text-[#ffddff] mb-4">Evento no encontrado</h2>
-            <p className="text-white mb-6">El evento que buscas no existe o ha sido eliminado.</p>
+            <p className="text-[#a0d2ff] mb-6">El evento que buscas no existe o ha sido eliminado.</p>
             <Link href="/discover">
               <GradientButton>Volver a Discover</GradientButton>
             </Link>
@@ -373,8 +384,21 @@ export default function EventDetailPage() {
     )
   }
 
-  const availableSpots = event.capacity - event.registrations_count
-  const percentFull = (event.registrations_count / event.capacity) * 100
+  // ✅ CORRECCIÓN TEMPORAL: Cálculo mejorado de disponibilidad
+  // Usamos campos que realmente existen en la base de datos
+  const registrationsCount = event.registrations_count || event.registrations || 0
+  const eventCapacity = event.capacity || event.max_attendees || 0
+  const availableSpots = Math.max(0, eventCapacity - registrationsCount)
+  const percentFull = eventCapacity > 0 ? (registrationsCount / eventCapacity) * 100 : 0
+
+  // Debug del cálculo
+  console.log("🔍 DEBUG - Availability calculation:", {
+    registrationsCount,
+    eventCapacity,
+    availableSpots,
+    percentFull: `${percentFull.toFixed(2)}%`
+  })
+
   const allFloors = Object.keys(floorNames)
     .map(Number)
     .sort((a, b) => b - a)
@@ -388,21 +412,21 @@ export default function EventDetailPage() {
             <Button
               onClick={() => router.push("/discover")}
               variant="outline"
-              className="border-[#f1c6ff] text-[#f1c6ff]"
+              className="border-[#f1c6ff] text-[#ffffff] hover:text-[#f1c6ff]"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Volver a Discover
             </Button>
 
             <div className="flex items-center gap-3">
-              <Button variant="outline" className="border-[#f1c6ff]/50 text-[#f1c6ff] bg-transparent">
+              <Button variant="outline" className="border-[#f1c6ff]/50 text-[#ffffff] hover:text-[#f1c6ff] bg-transparent">
                 <Heart className="w-4 h-4 mr-2" />
                 Guardar
               </Button>
               <Button
                 onClick={handleShare}
                 variant="outline"
-                className="border-[#f1c6ff]/50 text-[#f1c6ff] bg-transparent"
+                className="border-[#f1c6ff]/50 text-[#ffffff] hover:text-[#f1c6ff] bg-transparent"
               >
                 <Share2 className="w-4 h-4 mr-2" />
                 Compartir
@@ -427,22 +451,22 @@ export default function EventDetailPage() {
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-4">
-                    <Badge className="bg-primary/20 text-primary border-primary/30 backdrop-blur-sm">
+                    <Badge className="bg-[#f1c6ff]/20 text-[#f1c6ff] border-[#f1c6ff]/30 backdrop-blur-sm">
                       {event.category}
                     </Badge>
                     {(event.map_json_file || scheduleDays.some((d) => d.map_json_file)) && (
-                      <Badge className="bg-gradient-to-r from-secondary to-accent-pink text-white glow-secondary border-0">
+                      <Badge className="bg-gradient-to-r from-[#ff00ff] to-[#f1c6ff] text-white glow-secondary border-0">
                         Vista 3D Disponible
                       </Badge>
                     )}
                     {durationDays > 1 && (
-                      <Badge className="bg-gradient-to-r from-primary to-secondary text-white border-0">
+                      <Badge className="bg-gradient-to-r from-[#f1c6ff] to-[#ffddff] text-[#1e1732] border-0">
                         {durationDays} Días
                       </Badge>
                     )}
                   </div>
                   <h1 className="text-5xl font-bold text-[#ffddff] mb-4">{event.title}</h1>
-                  <p className="text-xl text-white max-w-3xl">{event.description}</p>
+                  <p className="text-xl text-[#ffffff] max-w-3xl">{event.description}</p>
                 </div>
               </div>
             </div>
@@ -458,8 +482,8 @@ export default function EventDetailPage() {
                     onClick={() => setSelectedTab("info")}
                     className={`px-4 py-2 rounded-lg font-medium transition-all ${
                       selectedTab === "info"
-                        ? "bg-gradient-to-r from-primary to-secondary text-white"
-                        : "text-[#b8a3ff] hover:text-white"
+                        ? "bg-gradient-to-r from-[#f1c6ff] to-[#ffddff] text-[#1e1732]"
+                        : "text-[#a0d2ff] hover:text-[#ffffff]"
                     }`}
                   >
                     <Info className="w-4 h-4 inline mr-2" />
@@ -470,8 +494,8 @@ export default function EventDetailPage() {
                       onClick={() => setSelectedTab("schedule")}
                       className={`px-4 py-2 rounded-lg font-medium transition-all ${
                         selectedTab === "schedule"
-                          ? "bg-gradient-to-r from-primary to-secondary text-white"
-                          : "text-[#b8a3ff] hover:text-white"
+                          ? "bg-gradient-to-r from-[#f1c6ff] to-[#ffddff] text-[#1e1732]"
+                          : "text-[#a0d2ff] hover:text-[#ffffff]"
                       }`}
                     >
                       <Clock className="w-4 h-4 inline mr-2" />
@@ -483,8 +507,8 @@ export default function EventDetailPage() {
                       onClick={() => setSelectedTab("gallery")}
                       className={`px-4 py-2 rounded-lg font-medium transition-all ${
                         selectedTab === "gallery"
-                          ? "bg-gradient-to-r from-primary to-secondary text-white"
-                          : "text-[#b8a3ff] hover:text-white"
+                          ? "bg-gradient-to-r from-[#f1c6ff] to-[#ffddff] text-[#1e1732]"
+                          : "text-[#a0d2ff] hover:text-[#ffffff]"
                       }`}
                     >
                       <ImageIcon className="w-4 h-4 inline mr-2" />
@@ -496,8 +520,8 @@ export default function EventDetailPage() {
                       onClick={() => setSelectedTab("map")}
                       className={`px-4 py-2 rounded-lg font-medium transition-all ${
                         selectedTab === "map"
-                          ? "bg-gradient-to-r from-primary to-secondary text-white"
-                          : "text-[#b8a3ff] hover:text-white"
+                          ? "bg-gradient-to-r from-[#f1c6ff] to-[#ffddff] text-[#1e1732]"
+                          : "text-[#a0d2ff] hover:text-[#ffffff]"
                       }`}
                     >
                       <Layers className="w-4 h-4 inline mr-2" />
@@ -511,7 +535,7 @@ export default function EventDetailPage() {
                   <div className="space-y-6">
                     <div>
                       <h3 className="text-xl font-bold text-[#ffddff] mb-3">Acerca del evento</h3>
-                      <p className="text-white leading-relaxed whitespace-pre-wrap">
+                      <p className="text-[#ffffff] leading-relaxed whitespace-pre-wrap">
                         {event.about_event || event.description}
                       </p>
                     </div>
@@ -541,7 +565,7 @@ export default function EventDetailPage() {
                         <div className="text-[#f1c6ff] font-semibold min-w-[100px]">{item.time}</div>
                         <div className="flex-1">
                           <h4 className="text-[#ffddff] font-semibold mb-1">{item.title}</h4>
-                          {item.description && <p className="text-white text-sm">{item.description}</p>}
+                          {item.description && <p className="text-[#ffffff] text-sm">{item.description}</p>}
                         </div>
                       </div>
                     ))}
@@ -585,7 +609,7 @@ export default function EventDetailPage() {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <h3 className="text-xl font-bold text-[#ffddff]">Mapa 3D Interactivo</h3>
-                      <p className="text-sm text-[#b8a3ff]">Haz click derecho sobre los elementos para ver detalles</p>
+                      <p className="text-sm text-[#a0d2ff]">Haz click derecho sobre los elementos para ver detalles</p>
                     </div>
 
                     {durationDays > 1 && scheduleDays.length > 0 && (
@@ -595,7 +619,7 @@ export default function EventDetailPage() {
                           className={`px-4 py-2 rounded-lg font-medium transition-all ${
                             selectedDay === null
                               ? "bg-gradient-to-r from-[#f1c6ff] to-[#ffddff] text-[#1e1732]"
-                              : "bg-[#1e1732]/50 text-white hover:bg-[#1e1732]"
+                              : "bg-[#1e1732]/50 text-[#ffffff] hover:bg-[#1e1732]"
                           }`}
                         >
                           <Calendar className="w-4 h-4 inline mr-2" />
@@ -608,7 +632,7 @@ export default function EventDetailPage() {
                             className={`px-4 py-2 rounded-lg font-medium transition-all ${
                               selectedDay === day.day_number
                                 ? "bg-gradient-to-r from-[#f1c6ff] to-[#ffddff] text-[#1e1732] font-semibold"
-                                : "bg-[#2a1f3d]/50 text-white hover:bg-[#2a1f3d] border border-[#f1c6ff]/20"
+                                : "bg-[#2a1f3d]/50 text-[#ffffff] hover:bg-[#2a1f3d] border border-[#f1c6ff]/20"
                             }`}
                           >
                             <Calendar className="w-4 h-4 inline mr-2" />
@@ -628,7 +652,7 @@ export default function EventDetailPage() {
                             className={`px-4 py-2 rounded-lg font-medium transition-all ${
                               currentFloor === floor
                                 ? "bg-gradient-to-r from-[#f1c6ff] to-[#ffddff] text-[#1e1732] font-semibold"
-                                : "bg-[#2a1f3d]/50 text-white hover:bg-[#2a1f3d] border border-[#f1c6ff]/20"
+                                : "bg-[#2a1f3d]/50 text-[#ffffff] hover:bg-[#2a1f3d] border border-[#f1c6ff]/20"
                             }`}
                           >
                             <Layers className="w-4 h-4 inline mr-2" />
@@ -650,7 +674,7 @@ export default function EventDetailPage() {
                         sceneConfig={sceneConfig}
                       />
                     </div>
-                    <p className="text-xs text-[#b8a3ff] text-center mt-2">
+                    <p className="text-xs text-[#a0d2ff] text-center mt-2">
                       <span className="text-[#f1c6ff] font-semibold">Arrastra:</span> Rotar •{" "}
                       <span className="text-[#f1c6ff] font-semibold">Click derecho en objetos:</span> Ver detalles •{" "}
                       <span className="text-[#f1c6ff] font-semibold">Scroll:</span> Zoom
@@ -667,10 +691,10 @@ export default function EventDetailPage() {
                 <h3 className="text-2xl font-bold text-[#ffddff] mb-4">Registro</h3>
 
                 <div className="space-y-4 mb-6">
-                  <div className="flex items-center gap-3 text-white">
+                  <div className="flex items-center gap-3 text-[#ffffff]">
                     <Calendar className="w-5 h-5 text-[#f1c6ff]" />
                     <div>
-                      <p className="text-sm text-[#b8a3ff]">Fecha de inicio</p>
+                      <p className="text-sm text-[#a0d2ff]">Fecha de inicio</p>
                       <p className="font-semibold">
                         {new Date(event.start_date).toLocaleDateString("es-ES", {
                           day: "numeric",
@@ -681,10 +705,10 @@ export default function EventDetailPage() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3 text-white">
+                  <div className="flex items-center gap-3 text-[#ffffff]">
                     <Calendar className="w-5 h-5 text-[#f1c6ff]" />
                     <div>
-                      <p className="text-sm text-[#b8a3ff]">Fecha de fin</p>
+                      <p className="text-sm text-[#a0d2ff]">Fecha de fin</p>
                       <p className="font-semibold">
                         {new Date(event.end_date).toLocaleDateString("es-ES", {
                           day: "numeric",
@@ -696,32 +720,34 @@ export default function EventDetailPage() {
                   </div>
 
                   {event.location && (
-                    <div className="flex items-center gap-3 text-white">
+                    <div className="flex items-center gap-3 text-[#ffffff]">
                       <MapPin className="w-5 h-5 text-[#f1c6ff]" />
                       <div>
-                        <p className="text-sm text-[#b8a3ff]">Ubicación</p>
+                        <p className="text-sm text-[#a0d2ff]">Ubicación</p>
                         <p className="font-semibold">{event.location}</p>
                       </div>
                     </div>
                   )}
 
+                  {/* ✅ CORRECCIÓN TEMPORAL: Disponibilidad mejorada */}
                   <div className="pt-4 border-t border-[#f1c6ff]/20">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <Users className="w-5 h-5 text-[#f1c6ff]" />
-                        <span className="text-white font-semibold">{availableSpots}</span>
-                        <span className="text-[#b8a3ff]">lugares disponibles</span>
+                        <span className="text-[#ffffff] font-semibold">{availableSpots}</span>
+                        <span className="text-[#a0d2ff]">lugares disponibles</span>
                       </div>
                     </div>
 
-                    <div className="h-2 bg-[#2a1f3d] rounded-full overflow-hidden">
+                    {/* Barra de progreso idéntica a Discover */}
+                    <div className="h-2 bg-[#2a2342] rounded-full overflow-hidden">
                       <div
                         className={`h-full transition-all ${
                           percentFull > 80
-                            ? "bg-gradient-to-r from-error to-warning"
+                            ? "bg-gradient-to-r from-[#ff4444] to-[#ffaa00]"
                             : percentFull > 50
-                              ? "bg-gradient-to-r from-warning to-success"
-                              : "bg-gradient-to-r from-primary to-secondary"
+                              ? "bg-gradient-to-r from-[#ffaa00] to-[#00ff88]"
+                              : "bg-gradient-to-r from-[#f1c6ff] to-[#ff00ff]"
                         }`}
                         style={{ width: `${percentFull}%` }}
                       />
@@ -734,7 +760,7 @@ export default function EventDetailPage() {
                 </GradientButton>
 
                 {event.requires_approval && (
-                  <p className="text-xs text-[#b8a3ff] text-center mt-3">
+                  <p className="text-xs text-[#a0d2ff] text-center mt-3">
                     Este evento requiere aprobación del organizador
                   </p>
                 )}
@@ -743,7 +769,7 @@ export default function EventDetailPage() {
               {/* Event Type Badge */}
               <GlassCard>
                 <h4 className="text-sm font-semibold text-[#ffddff] mb-3">Tipo de evento</h4>
-                <Badge className="bg-gradient-to-r from-primary to-secondary text-white">
+                <Badge className="bg-gradient-to-r from-[#f1c6ff] to-[#ffddff] text-[#1e1732]">
                   {event.event_type === "presencial"
                     ? "Presencial"
                     : event.event_type === "virtual"
@@ -772,7 +798,7 @@ export default function EventDetailPage() {
             category: event.category,
             capacity: event.capacity,
             unlimitedCapacity: event.unlimited_capacity,
-            registrations: event.registrations_count || 0,
+            registrations: event.registrations_count || event.registrations || 0, 
             isPublic: event.is_public,
             requiresApproval: event.requires_approval,
             organizerId: event.organizer_id,
