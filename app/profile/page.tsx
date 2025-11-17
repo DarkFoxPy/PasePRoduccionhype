@@ -15,7 +15,9 @@ import { ImageUploader } from "@/components/media/image-uploader"
 export default function ProfilePage() {
   const router = useRouter()
   const { isAuthenticated, user, updateProfile } = useAuthStore()
-  const { events } = useEventsStore()
+  const { getEventsByOrganizer } = useEventsStore()
+  const [organizerEvents, setOrganizerEvents] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
   const [isEditing, setIsEditing] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -43,6 +45,27 @@ export default function ProfilePage() {
   }, [isAuthenticated, router])
 
   useEffect(() => {
+    const loadOrganizerEvents = async () => {
+      if (user?.id) {
+        setLoading(true)
+        try {
+          const events = await getEventsByOrganizer(user.id)
+          setOrganizerEvents(events)
+          console.log("📊 Profile - Organizer events loaded:", events.length)
+        } catch (error) {
+          console.error("Error loading organizer events for profile:", error)
+        } finally {
+          setLoading(false)
+        }
+      }
+    }
+
+    if (isAuthenticated && user) {
+      loadOrganizerEvents()
+    }
+  }, [isAuthenticated, user, getEventsByOrganizer])
+
+  useEffect(() => {
     if (user) {
       setFormData({
         name: user.name || "",
@@ -68,15 +91,34 @@ export default function ProfilePage() {
     return null
   }
 
-  const myEvents = events.filter((event) => event.organizerId === user.id)
-  const upcomingEvents = myEvents.filter((event) => new Date(event.startDate) > new Date())
-  const totalAttendees = myEvents.reduce((acc, event) => acc + event.registrations, 0)
+  // Cálculos basados en datos reales de la BD
+  const eventosCreados = organizerEvents.length
+  const proximosEventos = organizerEvents.filter((event) => new Date(event.startDate) > new Date()).length
 
   const handleSave = () => {
     console.log("[v0] Saving profile:", formData)
     updateProfile(formData)
     setIsEditing(false)
     toast.success("Perfil actualizado exitosamente")
+  }
+
+  if (loading) {
+    return (
+      <FuturisticBackground>
+        <div className="flex min-h-screen">
+          <Sidebar />
+          <div className="flex-1 lg:ml-64">
+            <Header />
+            <main className="p-6 max-w-4xl mx-auto flex items-center justify-center min-h-[60vh]">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#f1c6ff] mx-auto mb-4"></div>
+                <p className="text-[#a0d2ff]">Cargando perfil...</p>
+              </div>
+            </main>
+          </div>
+        </div>
+      </FuturisticBackground>
+    )
   }
 
   return (
@@ -332,7 +374,7 @@ export default function ProfilePage() {
                     <Calendar className="w-6 h-6 text-[#1e1732]" />
                   </div>
                   <div>
-                    <p className="text-3xl font-bold text-[#ffddff]">{myEvents.length}</p>
+                    <p className="text-3xl font-bold text-[#ffddff]">{eventosCreados}</p>
                     <p className="text-sm text-white">Eventos Creados</p>
                   </div>
                 </div>
@@ -344,7 +386,7 @@ export default function ProfilePage() {
                     <Users className="w-6 h-6 text-[#1e1732]" />
                   </div>
                   <div>
-                    <p className="text-3xl font-bold text-[#ffddff]">{upcomingEvents.length}</p>
+                    <p className="text-3xl font-bold text-[#ffddff]">{proximosEventos}</p>
                     <p className="text-sm text-white">Próximos Eventos</p>
                   </div>
                 </div>

@@ -11,10 +11,10 @@ import { ArrowLeft, ArrowRight, Check, MapPin, Video, HelpCircle, Infinity } fro
 import toast from "react-hot-toast"
 import type { Map3DConfig, FormField } from "@/lib/types"
 import { FuturisticBackground } from "@/components/futuristic-background"
-import { FormBuilder } from "@/components/forms/form-builder"
 import { ImageUploader } from "@/components/media/image-uploader"
 import { GalleryUploader } from "@/components/media/gallery-uploader"
 import { ScheduleDayManager } from "@/components/events/schedule-day-manager"
+import { EnhancedFormBuilder } from "@/components/forms/enhanced-form-builder"
 
 const CATEGORIES = ["Conferencia", "Concierto", "Exposición", "Networking", "Taller", "Deportivo", "Cultural", "Otro"]
 
@@ -273,8 +273,7 @@ export default function CreateEventPage() {
                       </p>
                       {durationDays > 1 && showSchedulePrompt && (
                         <p className="text-sm text-[#e2e2e2] mt-2">
-                          💡 Tu evento dura más de 24 horas. Podrás configurar un cronograma detallado por día con mapas
-                          y ubicaciones distintas en el paso 3.
+                          💡 Tu evento dura más de 24 horas. Podrás configurar un cronograma detallado por día una vez finalizado el proceso de creación del evento.
                         </p>
                       )}
                     </div>
@@ -516,7 +515,7 @@ export default function CreateEventPage() {
 
                   {formData.hasCustomForm && (
                     <div className="mt-6 p-6 rounded-lg bg-[#1e1732]/30 border border-[#f1c6ff]/20">
-                      <FormBuilder
+                      <EnhancedFormBuilder
                         fields={formData.customFormFields}
                         onChange={(fields) => setFormData({ ...formData, customFormFields: fields })}
                       />

@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useAuthStore } from "@/lib/stores/auth-store"
 import { useEventsStore } from "@/lib/stores/events-store"
@@ -15,7 +15,9 @@ import Link from "next/link"
 export default function DashboardPage() {
   const router = useRouter()
   const { isAuthenticated, user } = useAuthStore()
-  const { events } = useEventsStore()
+  const { events, getEventsByOrganizer } = useEventsStore()
+  const [organizerEvents, setOrganizerEvents] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -23,36 +25,80 @@ export default function DashboardPage() {
     }
   }, [isAuthenticated, router])
 
+  useEffect(() => {
+    const loadOrganizerEvents = async () => {
+      if (user?.id) {
+        setLoading(true)
+        try {
+          const events = await getEventsByOrganizer(user.id)
+          setOrganizerEvents(events)
+          console.log("📊 Organizer events loaded:", events.length)
+        } catch (error) {
+          console.error("Error loading organizer events:", error)
+        } finally {
+          setLoading(false)
+        }
+      }
+    }
+
+    if (isAuthenticated && user) {
+      loadOrganizerEvents()
+    }
+  }, [isAuthenticated, user, getEventsByOrganizer])
+
   if (!isAuthenticated) {
     return null
   }
 
-  const myEvents = events.filter((event) => event.organizerId === user?.id)
-  const upcomingEvents = myEvents.filter((event) => new Date(event.startDate) > new Date())
+  // Cálculos basados en datos reales de la BD
+  const eventosCreados = organizerEvents.length
+  const proximosEventos = organizerEvents.filter((event) => new Date(event.startDate) > new Date()).length
+  const maxAsistentes = organizerEvents.length > 0 
+    ? Math.max(...organizerEvents.map(event => event.registrations || 0)) 
+    : 0
 
   const stats = [
     {
       label: "Eventos Creados",
-      value: myEvents.length,
+      value: eventosCreados,
       icon: Calendar,
       color: "from-[#f1c6ff] to-[#ffddff]",
       glow: "glow-primary" as const,
     },
     {
       label: "Próximos Eventos",
-      value: upcomingEvents.length,
+      value: proximosEventos,
       icon: TrendingUp,
       color: "from-[#ffddff] to-[#f1c6ff]",
       glow: "glow-secondary" as const,
     },
     {
-      label: "Total Asistentes",
-      value: myEvents.reduce((acc, event) => acc + event.registrations, 0),
+      label: "Máximo de Asistentes",
+      value: maxAsistentes,
       icon: Users,
       color: "from-[#f1c6ff] to-[#ffddff]",
       glow: "glow-pink" as const,
     },
   ]
+
+  if (loading) {
+    return (
+      <FuturisticBackground>
+        <div className="flex min-h-screen">
+          <Sidebar />
+          <div className="flex-1 lg:ml-64">
+            <Header />
+            <main className="p-6 flex items-center justify-center min-h-[60vh]">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#f1c6ff] mx-auto mb-4"></div>
+                <p className="text-[#a0d2ff]">Cargando estadísticas...</p>
+              </div>
+            </main>
+          </div>
+        </div>
+      </FuturisticBackground>
+    )
+  }
 
   return (
     <FuturisticBackground>
@@ -111,7 +157,7 @@ export default function DashboardPage() {
                   </Link>
                 </div>
 
-                {myEvents.length === 0 ? (
+                {organizerEvents.length === 0 ? (
                   <div className="text-center py-12">
                     <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#f1c6ff]/20 to-[#ffddff]/20 flex items-center justify-center mx-auto mb-4">
                       <Calendar className="w-8 h-8 text-[#b8a3ff]" />
@@ -123,7 +169,7 @@ export default function DashboardPage() {
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {myEvents.slice(0, 3).map((event) => (
+                    {organizerEvents.slice(0, 3).map((event) => (
                       <Link
                         key={event.id}
                         href={`/events/${event.slug}/${event.id}`}
@@ -136,6 +182,9 @@ export default function DashboardPage() {
                             month: "long",
                             year: "numeric",
                           })}
+                        </p>
+                        <p className="text-xs text-[#a0d2ff] mt-1">
+                          {event.registrations || 0} asistentes registrados
                         </p>
                       </Link>
                     ))}

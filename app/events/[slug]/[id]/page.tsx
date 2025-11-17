@@ -27,6 +27,9 @@ import {
   Video,
   Info,
   Layers,
+  X,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react"
 import toast from "react-hot-toast"
 
@@ -50,6 +53,9 @@ export default function EventDetailPage() {
     lighting: "indoor",
     groundTexture: "concrete",
   })
+  // Estados para el modal de imagen
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null)
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false)
 
   useEffect(() => {
     const loadEvent = async () => {
@@ -89,6 +95,48 @@ export default function EventDetailPage() {
 
     loadEvent()
   }, [params.id, user])
+
+  // Función para abrir imagen en modal
+  const openImageModal = (index: number) => {
+    setSelectedImageIndex(index)
+    setIsImageModalOpen(true)
+  }
+
+  // Función para cerrar modal
+  const closeImageModal = () => {
+    setIsImageModalOpen(false)
+    setSelectedImageIndex(null)
+  }
+
+  // Función para navegar entre imágenes
+  const navigateImage = (direction: 'prev' | 'next') => {
+    if (selectedImageIndex === null || !event?.galleryImages) return
+    
+    const totalImages = event.galleryImages.length
+    if (direction === 'prev') {
+      setSelectedImageIndex(selectedImageIndex === 0 ? totalImages - 1 : selectedImageIndex - 1)
+    } else {
+      setSelectedImageIndex(selectedImageIndex === totalImages - 1 ? 0 : selectedImageIndex + 1)
+    }
+  }
+
+  // Manejar teclado para navegación
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isImageModalOpen) return
+      
+      if (e.key === 'Escape') {
+        closeImageModal()
+      } else if (e.key === 'ArrowLeft') {
+        navigateImage('prev')
+      } else if (e.key === 'ArrowRight') {
+        navigateImage('next')
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isImageModalOpen, selectedImageIndex])
 
   if (loading) {
     return (
@@ -162,29 +210,30 @@ export default function EventDetailPage() {
         <div className={`flex-1 ${isAuthenticated ? "lg:ml-64" : ""}`}>
           {isAuthenticated && <Header />}
 
-          <main className="p-6 space-y-6">
+          <main className="p-4 md:p-6 space-y-6">
             {/* Hero Section */}
-            <div className="relative h-64 rounded-2xl overflow-hidden">
+            <div className="relative h-48 md:h-64 rounded-2xl overflow-hidden">
               <img
                 src={
                   event.coverImage ||
                   `/placeholder.svg?height=400&width=1200&query=${encodeURIComponent(event.title) || "/placeholder.svg"}`
                 }
                 alt={event.title}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover cursor-pointer"
+                onClick={() => event.coverImage && openImageModal(0)}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
 
               {/* Texto con contorno blanco */}
-              <div className="absolute bottom-6 left-6 right-6">
-                <div className="flex items-start justify-between gap-4">
+              <div className="absolute bottom-4 md:bottom-6 left-4 md:left-6 right-4 md:right-6">
+                <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                   <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="px-3 py-1 rounded-full text-xs font-semibold bg-primary/20 text-primary border border-primary/30 [text-shadow:_0_1px_0_rgb(255_255_255_/_40%),_0_-1px_0_rgb(255_255_255_/_40%),_1px_0_0_rgb(255_255_255_/_40%),_-1px_0_0_rgb(255_255_255_/_40%)]">
+                    <div className="flex flex-wrap items-center gap-2 mb-2">
+                      <span className="px-2 py-1 rounded-full text-xs font-semibold bg-primary/20 text-primary border border-primary/30 [text-shadow:_0_1px_0_rgb(255_255_255_/_40%)]">
                         {event.category}
                       </span>
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-semibold [text-shadow:_0_1px_0_rgb(255_255_255_/_40%),_0_-1px_0_rgb(255_255_255_/_40%),_1px_0_0_rgb(255_255_255_/_40%),_-1px_0_0_rgb(255_255_255_/_40%)] ${
+                        className={`px-2 py-1 rounded-full text-xs font-semibold [text-shadow:_0_1px_0_rgb(255_255_255_/_40%)] ${
                           event.status === "published"
                             ? "bg-success/20 text-success border border-success/30"
                             : "bg-warning/20 text-warning border border-warning/30"
@@ -193,47 +242,44 @@ export default function EventDetailPage() {
                         {event.status === "published" ? "Publicado" : "Borrador"}
                       </span>
                       {eventEnded && (
-                        <span className="px-3 py-1 rounded-full text-xs font-semibold bg-error/20 text-error border border-error/30 [text-shadow:_0_1px_0_rgb(255_255_255_/_40%),_0_-1px_0_rgb(255_255_255_/_40%),_1px_0_0_rgb(255_255_255_/_40%),_-1px_0_0_rgb(255_255_255_/_40%)]">
+                        <span className="px-2 py-1 rounded-full text-xs font-semibold bg-error/20 text-error border border-error/30 [text-shadow:_0_1px_0_rgb(255_255_255_/_40%)]">
                           Finalizado
                         </span>
                       )}
                     </div>
-                    <h1 className="text-4xl font-bold text-[#ffddff] mb-2 [text-shadow:_0_1px_0_rgb(255_255_255_/_40%),_0_-1px_0_rgb(255_255_255_/_40%),_1px_0_0_rgb(255_255_255_/_40%),_-1px_0_0_rgb(255_255_255_/_40%)]">
+                    <h1 className="text-2xl md:text-4xl font-bold text-[#ffddff] mb-2 [text-shadow:_0_1px_0_rgb(255_255_255_/_40%)]">
                       {event.title}
                     </h1>
-                    <p className="text-[#a0d2ff] max-w-2xl [text-shadow:_0_1px_0_rgb(255_255_255_/_40%),_0_-1px_0_rgb(255_255_255_/_40%),_1px_0_0_rgb(255_255_255_/_40%),_-1px_0_0_rgb(255_255_255_/_40%)]">
+                    <p className="text-[#a0d2ff] text-sm md:text-base max-w-2xl [text-shadow:_0_1px_0_rgb(255_255_255_/_40%)] line-clamp-2">
                       {event.description}
                     </p>
                   </div>
 
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 justify-end">
                     {isOrganizer && (
                       <Link href={`/events/${event.slug}/${event.id}/edit-map`}>
-                        <GradientButton className="gap-2">
-                          <Edit className="w-4 h-4" />
-                          Editar Mapa
+                        <GradientButton className="gap-2 text-sm">
+                          <Edit className="w-3 h-3 md:w-4 md:h-4" />
+                          <span className="hidden md:inline">Editar Mapa</span>
+                          <span className="md:hidden">Mapa</span>
                         </GradientButton>
                       </Link>
                     )}
-                    <GradientButton variant="outline" onClick={handleShare} glow={false} className="gap-2">
-                      <Share2 className="w-4 h-4" />
-                      Compartir
-                    </GradientButton>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Event Info Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <GlassCard hover>
-                <div className="flex items-center gap-3">
-                  <div className="p-3 rounded-lg bg-gradient-to-br from-primary to-primary-hover">
-                    <Calendar className="w-5 h-5 text-white" />
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+              <GlassCard hover className="p-3 md:p-4">
+                <div className="flex items-center gap-2 md:gap-3">
+                  <div className="p-2 md:p-3 rounded-lg bg-gradient-to-br from-primary to-primary-hover">
+                    <Calendar className="w-4 h-4 md:w-5 md:h-5 text-white" />
                   </div>
                   <div>
                     <p className="text-xs text-[#a0d2ff]">Fecha Inicio</p>
-                    <p className="font-semibold text-[#ffffff]">
+                    <p className="font-semibold text-[#ffffff] text-sm md:text-base">
                       {new Date(event.startDate).toLocaleDateString("es-ES", {
                         day: "numeric",
                         month: "short",
@@ -244,14 +290,14 @@ export default function EventDetailPage() {
                 </div>
               </GlassCard>
 
-              <GlassCard hover>
-                <div className="flex items-center gap-3">
-                  <div className="p-3 rounded-lg bg-gradient-to-br from-secondary to-secondary-hover">
-                    <Calendar className="w-5 h-5 text-white" />
+              <GlassCard hover className="p-3 md:p-4">
+                <div className="flex items-center gap-2 md:gap-3">
+                  <div className="p-2 md:p-3 rounded-lg bg-gradient-to-br from-secondary to-secondary-hover">
+                    <Calendar className="w-4 h-4 md:w-5 md:h-5 text-white" />
                   </div>
                   <div>
                     <p className="text-xs text-[#a0d2ff]">Fecha Fin</p>
-                    <p className="font-semibold text-[#ffffff]">
+                    <p className="font-semibold text-[#ffffff] text-sm md:text-base">
                       {new Date(event.endDate).toLocaleDateString("es-ES", {
                         day: "numeric",
                         month: "short",
@@ -262,26 +308,26 @@ export default function EventDetailPage() {
                 </div>
               </GlassCard>
 
-              <GlassCard hover>
-                <div className="flex items-center gap-3">
-                  <div className="p-3 rounded-lg bg-gradient-to-br from-accent-pink to-accent-orange">
-                    <MapPin className="w-5 h-5 text-white" />
+              <GlassCard hover className="p-3 md:p-4">
+                <div className="flex items-center gap-2 md:gap-3">
+                  <div className="p-2 md:p-3 rounded-lg bg-gradient-to-br from-accent-pink to-accent-orange">
+                    <MapPin className="w-4 h-4 md:w-5 md:h-5 text-white" />
                   </div>
                   <div>
                     <p className="text-xs text-[#a0d2ff]">Ubicación</p>
-                    <p className="font-semibold text-[#ffffff] line-clamp-1">{event.location}</p>
+                    <p className="font-semibold text-[#ffffff] text-sm md:text-base line-clamp-1">{event.location}</p>
                   </div>
                 </div>
               </GlassCard>
 
-              <GlassCard hover>
-                <div className="flex items-center gap-3">
-                  <div className="p-3 rounded-lg bg-gradient-to-br from-accent-lime to-success">
-                    <Users className="w-5 h-5 text-white" />
+              <GlassCard hover className="p-3 md:p-4">
+                <div className="flex items-center gap-2 md:gap-3">
+                  <div className="p-2 md:p-3 rounded-lg bg-gradient-to-br from-accent-lime to-success">
+                    <Users className="w-4 h-4 md:w-5 md:h-5 text-white" />
                   </div>
                   <div>
                     <p className="text-xs text-[#a0d2ff]">Disponibles</p>
-                    <p className="font-semibold text-[#ffffff]">
+                    <p className="font-semibold text-[#ffffff] text-sm md:text-base">
                       {availableSpots} / {event.capacity}
                     </p>
                   </div>
@@ -292,13 +338,13 @@ export default function EventDetailPage() {
             {event.aboutEvent && (
               <GlassCard>
                 <div className="flex items-center gap-3 mb-4">
-                  <Info className="w-6 h-6 text-primary" />
-                  <h2 className="text-2xl font-bold text-[#ffddff]">Acerca del Evento</h2>
+                  <Info className="w-5 h-5 md:w-6 md:h-6 text-primary" />
+                  <h2 className="text-xl md:text-2xl font-bold text-[#ffddff]">Acerca del Evento</h2>
                 </div>
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="text-sm text-[#a0d2ff]">Tipo de Evento:</span>
-                    <span className="px-3 py-1 rounded-full text-sm font-semibold bg-primary/20 text-primary border border-primary/30">
+                    <span className="px-2 py-1 rounded-full text-xs font-semibold bg-primary/20 text-primary border border-primary/30">
                       {event.eventType === "presencial"
                         ? "Presencial"
                         : event.eventType === "virtual"
@@ -306,20 +352,20 @@ export default function EventDetailPage() {
                           : "No Definido"}
                     </span>
                   </div>
-                  <p className="text-[#ffffff] leading-relaxed whitespace-pre-wrap">{event.aboutEvent}</p>
+                  <p className="text-[#ffffff] leading-relaxed whitespace-pre-wrap text-sm md:text-base">{event.aboutEvent}</p>
                 </div>
               </GlassCard>
             )}
 
             {event.eventType === "presencial" && event.eventLink && (
               <GlassCard>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                   <div>
                     <h3 className="text-lg font-bold text-[#ffffff] mb-1">Ubicación en Google Maps</h3>
                     <p className="text-sm text-[#a0d2ff]">Encuentra cómo llegar al evento</p>
                   </div>
                   <a href={event.eventLink} target="_blank" rel="noopener noreferrer">
-                    <GradientButton className="gap-2">
+                    <GradientButton className="gap-2 text-sm">
                       <ExternalLink className="w-4 h-4" />
                       Ver en Maps
                     </GradientButton>
@@ -330,13 +376,13 @@ export default function EventDetailPage() {
 
             {event.eventType === "virtual" && event.eventLink && (
               <GlassCard>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                   <div>
                     <h3 className="text-lg font-bold text-[#ffffff] mb-1">Enlace de Reunión Virtual</h3>
                     <p className="text-sm text-[#a0d2ff]">Únete al evento en línea</p>
                   </div>
                   <a href={event.eventLink} target="_blank" rel="noopener noreferrer">
-                    <GradientButton className="gap-2">
+                    <GradientButton className="gap-2 text-sm">
                       <ExternalLink className="w-4 h-4" />
                       Unirse
                     </GradientButton>
@@ -348,27 +394,35 @@ export default function EventDetailPage() {
             {((event.galleryImages && event.galleryImages.length > 0) || (event.videos && event.videos.length > 0)) && (
               <GlassCard>
                 <div className="flex items-center gap-3 mb-6">
-                  <ImageIcon className="w-6 h-6 text-primary" />
-                  <h2 className="text-2xl font-bold text-[#ffddff]">Galería</h2>
+                  <ImageIcon className="w-5 h-5 md:w-6 md:h-6 text-primary" />
+                  <h2 className="text-xl md:text-2xl font-bold text-[#ffddff]">Galería</h2>
                 </div>
 
                 {event.galleryImages && event.galleryImages.length > 0 && (
                   <div className="mb-6">
                     <h3 className="text-lg font-semibold text-[#ffffff] mb-3 flex items-center gap-2">
-                      <ImageIcon className="w-5 h-5" />
+                      <ImageIcon className="w-4 h-4 md:w-5 md:h-5" />
                       Imágenes
                     </h3>
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
                       {event.galleryImages.map((img: string, index: number) => (
                         <div
                           key={index}
-                          className="relative group overflow-hidden rounded-lg border border-border/50 hover:border-primary/50 transition-all"
+                          className="relative group overflow-hidden rounded-lg border border-border/50 hover:border-primary/50 transition-all cursor-pointer"
+                          onClick={() => openImageModal(index)}
                         >
                           <img
                             src={img || "/placeholder.svg"}
                             alt={`Gallery ${index + 1}`}
-                            className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                            className="w-full h-32 md:h-48 object-cover group-hover:scale-110 transition-transform duration-300"
                           />
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
+                            <div className="opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                              <div className="bg-black/50 rounded-full p-1 md:p-2">
+                                <ImageIcon className="w-4 h-4 md:w-6 md:h-6 text-white" />
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -378,13 +432,13 @@ export default function EventDetailPage() {
                 {event.videos && event.videos.length > 0 && (
                   <div>
                     <h3 className="text-lg font-semibold text-[#ffffff] mb-3 flex items-center gap-2">
-                      <Video className="w-5 h-5" />
+                      <Video className="w-4 h-4 md:w-5 md:h-5" />
                       Videos
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {event.videos.map((video: string, index: number) => (
                         <div key={index} className="relative overflow-hidden rounded-lg border border-border/50">
-                          <video src={video} controls className="w-full h-64 object-cover bg-black" />
+                          <video src={video} controls className="w-full h-48 md:h-64 object-cover bg-black" />
                         </div>
                       ))}
                     </div>
@@ -406,16 +460,17 @@ export default function EventDetailPage() {
 
             {event.schedule && event.schedule.length > 0 && (
               <div>
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4">
                   <div className="flex items-center gap-3">
-                    <CalendarDays className="w-6 h-6 text-primary" />
-                    <h2 className="text-2xl font-bold text-[#ffddff]">Cronograma del Evento</h2>
+                    <CalendarDays className="w-5 h-5 md:w-6 md:h-6 text-primary" />
+                    <h2 className="text-xl md:text-2xl font-bold text-[#ffddff]">Cronograma del Evento</h2>
                   </div>
                   {isOrganizer && (
                     <Link href={`/events/${event.slug}/${event.id}/schedule`}>
-                      <GradientButton variant="outline" glow={false} className="gap-2">
+                      <GradientButton variant="outline" glow={false} className="gap-2 text-sm">
                         <Edit className="w-4 h-4" />
-                        Editar Cronograma
+                        <span className="hidden md:inline">Editar Cronograma</span>
+                        <span className="md:hidden">Editar</span>
                       </GradientButton>
                     </Link>
                   )}
@@ -426,11 +481,11 @@ export default function EventDetailPage() {
 
             {mapMarkers.length > 0 && (
               <GlassCard className="p-0 overflow-hidden">
-                <div className="p-6 border-b border-border/50">
-                  <div className="flex items-center justify-between mb-4">
+                <div className="p-4 md:p-6 border-b border-border/50">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4">
                     <div>
-                      <h2 className="text-2xl font-bold text-[#ffddff]">Explora el Espacio en 3D</h2>
-                      <p className="text-[#a0d2ff] mt-1">Haz click derecho en los objetos para ver detalles completos</p>
+                      <h2 className="text-xl md:text-2xl font-bold text-[#ffddff]">Explora el Espacio en 3D</h2>
+                      <p className="text-[#a0d2ff] mt-1 text-sm">Haz click derecho en los objetos para ver detalles completos</p>
                     </div>
                   </div>
 
@@ -441,13 +496,13 @@ export default function EventDetailPage() {
                         <button
                           key={floor}
                           onClick={() => setCurrentFloor(floor)}
-                          className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                          className={`px-3 py-2 rounded-lg font-medium transition-all text-sm ${
                             currentFloor === floor
                               ? "bg-gradient-to-r from-[#f1c6ff] to-[#ffddff] text-[#1e1732] font-semibold"
                               : "bg-[#2a1f3d]/50 text-[#ffffff] hover:bg-[#2a1f3d] border border-[#f1c6ff]/20"
                           }`}
                         >
-                          <Layers className="w-4 h-4 inline mr-2" />
+                          <Layers className="w-3 h-3 inline mr-1 md:mr-2" />
                           {floorNames[floor]}
                           <span className="text-xs block opacity-70 mt-1">
                             {mapMarkers.filter((m) => m.floor === floor).length} elementos
@@ -458,7 +513,7 @@ export default function EventDetailPage() {
                   )}
                 </div>
 
-                <div className="h-[800px] p-6">
+                <div className="h-[400px] md:h-[600px] lg:h-[800px] p-4 md:p-6">
                   <VenueViewer
                     markers={mapMarkers}
                     onMarkerClick={(marker) => setSelectedMarker(marker)}
@@ -475,64 +530,56 @@ export default function EventDetailPage() {
               <GlassCard className="bg-gradient-to-r from-primary/10 via-secondary/10 to-accent-pink/10">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                   <div className="flex-1">
-                    <h3 className="text-2xl font-bold text-[#ffffff] mb-2">¿Listo para asistir?</h3>
-                    <p className="text-[#a0d2ff]">
+                    <h3 className="text-xl md:text-2xl font-bold text-[#ffffff] mb-2">¿Listo para asistir?</h3>
+                    <p className="text-[#a0d2ff] text-sm md:text-base">
                       Regístrate ahora y asegura tu lugar en este increíble evento. Quedan {availableSpots} lugares
                       disponibles.
                     </p>
                   </div>
                   <GradientButton
                     size="lg"
-                    className="gap-2"
+                    className="gap-2 text-sm md:text-base"
                     onClick={() => (isAuthenticated ? setShowRegisterModal(true) : router.push("/login"))}
                   >
-                    <UserPlus className="w-5 h-5" />
+                    <UserPlus className="w-4 h-4 md:w-5 md:h-5" />
                     Registrarse Ahora
                   </GradientButton>
                 </div>
               </GlassCard>
             )}
 
-            {/* Organizer Actions - BOTONES MEJORADOS */}
+            {/* Organizer Actions */}
             {isOrganizer && (
               <GlassCard className="border-2 border-[#f1c6ff]/30 bg-gradient-to-br from-[#1e1732]/80 to-[#2a1f3d]/80">
-                <h3 className="text-2xl font-bold text-[#ffddff] mb-6 text-center [text-shadow:_0_2px_4px_rgb(0_0_0_/_50%)]">
+                <h3 className="text-xl md:text-2xl font-bold text-[#ffddff] mb-6 text-center [text-shadow:_0_2px_4px_rgb(0_0_0_/_50%)]">
                   Acciones del Organizador
                 </h3>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center items-stretch">
+                <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center items-stretch">
                   {/* Botón Gestionar Cronograma */}
-                  <Link href={`/events/${event.slug}/${event.id}/schedule`} className="flex-1 min-w-[200px]">
-                    <button className="w-full h-full px-6 py-4 rounded-xl bg-gradient-to-r from-[#f1c6ff] to-[#ffddff] text-[#1e1732] font-bold hover:shadow-2xl hover:shadow-[#f1c6ff]/60 transition-all duration-300 flex flex-col items-center justify-center gap-3 border-2 border-white/20 hover:border-white/40">
-                      <CalendarDays className="w-6 h-6" />
-                      <span className="text-center">Gestionar Cronograma</span>
+                  <Link href={`/events/${event.slug}/${event.id}/schedule`} className="flex-1 min-w-[150px] md:min-w-[200px]">
+                    <button className="w-full h-full px-4 py-3 md:px-6 md:py-4 rounded-xl bg-gradient-to-r from-[#f1c6ff] to-[#ffddff] text-[#1e1732] font-bold hover:shadow-2xl hover:shadow-[#f1c6ff]/60 transition-all duration-300 flex flex-col items-center justify-center gap-2 md:gap-3 border-2 border-white/20 hover:border-white/40">
+                      <CalendarDays className="w-5 h-5 md:w-6 md:h-6" />
+                      <span className="text-center text-sm md:text-base">Gestionar Cronograma</span>
                     </button>
                   </Link>
 
                   {/* Botón Ver Respuestas del Formulario */}
                   {event.hasCustomForm && (
-                    <Link href={`/events/${event.slug}/${event.id}/form-responses`} className="flex-1 min-w-[200px]">
-                      <button className="w-full h-full px-6 py-4 rounded-xl bg-gradient-to-r from-[#f1c6ff] to-[#ffddff] text-[#1e1732] font-bold hover:shadow-2xl hover:shadow-[#f1c6ff]/60 transition-all duration-300 flex flex-col items-center justify-center gap-3 border-2 border-white/20 hover:border-white/40">
-                        <Users className="w-6 h-6" />
-                        <span className="text-center">Ver Respuestas del Formulario</span>
+                    <Link href={`/events/${event.slug}/${event.id}/form-responses`} className="flex-1 min-w-[150px] md:min-w-[200px]">
+                      <button className="w-full h-full px-4 py-3 md:px-6 md:py-4 rounded-xl bg-gradient-to-r from-[#f1c6ff] to-[#ffddff] text-[#1e1732] font-bold hover:shadow-2xl hover:shadow-[#f1c6ff]/60 transition-all duration-300 flex flex-col items-center justify-center gap-2 md:gap-3 border-2 border-white/20 hover:border-white/40">
+                        <Users className="w-5 h-5 md:w-6 md:h-6" />
+                        <span className="text-center text-sm md:text-base">Ver Respuestas</span>
                       </button>
                     </Link>
                   )}
 
                   {/* Botón Editar Evento */}
-                  <Link href={`/events/${event.slug}/${event.id}/edit`} className="flex-1 min-w-[200px]">
-                    <button className="w-full h-full px-6 py-4 rounded-xl bg-gradient-to-r from-[#f1c6ff] to-[#ffddff] text-[#1e1732] font-bold hover:shadow-2xl hover:shadow-[#f1c6ff]/60 transition-all duration-300 flex flex-col items-center justify-center gap-3 border-2 border-white/20 hover:border-white/40">
-                      <Edit className="w-6 h-6" />
-                      <span className="text-center">Editar Evento</span>
+                  <Link href={`/events/${event.slug}/${event.id}/edit`} className="flex-1 min-w-[150px] md:min-w-[200px]">
+                    <button className="w-full h-full px-4 py-3 md:px-6 md:py-4 rounded-xl bg-gradient-to-r from-[#f1c6ff] to-[#ffddff] text-[#1e1732] font-bold hover:shadow-2xl hover:shadow-[#f1c6ff]/60 transition-all duration-300 flex flex-col items-center justify-center gap-2 md:gap-3 border-2 border-white/20 hover:border-white/40">
+                      <Edit className="w-5 h-5 md:w-6 md:h-6" />
+                      <span className="text-center text-sm md:text-base">Editar Evento</span>
                     </button>
                   </Link>
-                </div>
-
-                {/* Contador de visitas */}
-                <div className="mt-6 pt-4 border-t border-[#f1c6ff]/20 flex justify-center">
-                  <div className="text-sm text-[#a0d2ff] flex items-center gap-2 bg-[#1e1732]/50 px-4 py-2 rounded-lg">
-                    <Users className="w-4 h-4" />
-                    <span className="font-semibold">{event.visitCount}</span> visitas
-                  </div>
                 </div>
               </GlassCard>
             )}
@@ -549,6 +596,57 @@ export default function EventDetailPage() {
             router.refresh()
           }}
         />
+      )}
+
+      {/* Image Modal */}
+      {isImageModalOpen && selectedImageIndex !== null && event.galleryImages && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm">
+          <div className="relative w-full h-full flex items-center justify-center p-2 md:p-4">
+            {/* Botón cerrar */}
+            <button
+              onClick={closeImageModal}
+              className="absolute top-2 md:top-4 right-2 md:right-4 z-10 p-2 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors"
+            >
+              <X className="w-5 h-5 md:w-6 md:h-6" />
+            </button>
+
+            {/* Botón anterior */}
+            {event.galleryImages.length > 1 && (
+              <button
+                onClick={() => navigateImage('prev')}
+                className="absolute left-2 md:left-4 z-10 p-2 md:p-3 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors"
+              >
+                <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
+              </button>
+            )}
+
+            {/* Imagen */}
+            <div className="relative w-full h-full flex items-center justify-center">
+              <img
+                src={event.galleryImages[selectedImageIndex] || "/placeholder.svg"}
+                alt={`Gallery image ${selectedImageIndex + 1}`}
+                className="max-w-full max-h-full object-contain rounded-lg"
+              />
+            </div>
+
+            {/* Botón siguiente */}
+            {event.galleryImages.length > 1 && (
+              <button
+                onClick={() => navigateImage('next')}
+                className="absolute right-2 md:right-4 z-10 p-2 md:p-3 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors"
+              >
+                <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
+              </button>
+            )}
+
+            {/* Contador */}
+            {event.galleryImages.length > 1 && (
+              <div className="absolute bottom-2 md:bottom-4 left-1/2 transform -translate-x-1/2 px-3 py-1 md:px-4 md:py-2 rounded-full bg-black/50 text-white text-xs md:text-sm">
+                {selectedImageIndex + 1} / {event.galleryImages.length}
+              </div>
+            )}
+          </div>
+        </div>
       )}
     </FuturisticBackground>
   )

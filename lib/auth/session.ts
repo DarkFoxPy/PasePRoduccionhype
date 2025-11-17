@@ -75,7 +75,7 @@ export async function getUserFromRequest(request: NextRequest) {
       updatedAt: new Date(user.updated_at),
     }
   } catch (error) {
-    console.error("[v0] Error getting user from request:", error)
+    console.error("Error getting user from request:", error)
     return null
   }
 }

@@ -8,7 +8,7 @@ import { useAuthStore } from "@/lib/stores/auth-store"
 import { GradientButton } from "@/components/ui/gradient-button"
 import { GlassCard } from "@/components/ui/glass-card"
 import { FuturisticBackground } from "@/components/futuristic-background"
-import { Mail, Lock, User, AtSign, Sparkles, Building2, FileText, Briefcase, Upload } from "lucide-react"
+import { Mail, Lock, User, AtSign, Sparkles, Building2, FileText, Briefcase, Upload, Check } from "lucide-react"
 import toast from "react-hot-toast"
 
 export default function RegisterPage() {
@@ -17,6 +17,7 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false)
   const [accountType, setAccountType] = useState<"participant" | "coordinator">("coordinator")
   const [profilePicture, setProfilePicture] = useState<string | null>(null)
+  const [acceptedTerms, setAcceptedTerms] = useState(false) // Nuevo estado para el checkbox
   const [formData, setFormData] = useState({
     name: "",
     username: "",
@@ -41,6 +42,11 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (!acceptedTerms) {
+      toast.error("Debes aceptar los términos y condiciones para continuar")
+      return
+    }
 
     if (formData.password !== formData.confirmPassword) {
       toast.error("Las contraseñas no coinciden")
@@ -86,15 +92,15 @@ export default function RegisterPage() {
       <div className="min-h-screen flex items-center justify-center p-4 relative">
         <div className="w-full max-w-2xl relative z-10">
           {/* Logo */}
-<div className="text-center mb-8">
-  <div className="inline-flex items-center justify-center w-32 h-32 rounded-2xl bg-gradient-to-br from-[#f1c6ff] to-[#ffddff] glow-primary mb-4 animate-float p-0.1">
-    <img 
-      src="/logo-hype.png" 
-      alt="HYPE Logo" 
-      className="w-full h-full object-contain"
-    />
-  </div>
-   <h1 className="text-4xl font-bold gradient-text mb-2"> HYPE </h1>
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-32 h-32 rounded-2xl bg-gradient-to-br from-[#f1c6ff] to-[#ffddff] glow-primary mb-4 animate-float p-0.1">
+              <img 
+                src="/logo-hype.png" 
+                alt="HYPE Logo" 
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <h1 className="text-4xl font-bold gradient-text mb-2"> HYPE </h1>
             <p className="text-[#e2e2e2]">Crea tu cuenta y comienza</p>
           </div>
 
@@ -109,20 +115,20 @@ export default function RegisterPage() {
             <div className="space-y-3">
               <label className="block text-sm font-medium text-[#ffddff]">Tipo de Cuenta</label>
               <div className="grid grid-cols-2 gap-4">
-<button
-  type="button"
-  onClick={() => setAccountType("participant")}
-  disabled
-  className={`p-4 rounded-xl border-2 transition-all ${
-    accountType === "participant"
-      ? "border-[#f1c6ff] bg-[#f1c6ff]/20"
-      : "border-[#f1c6ff]/20 bg-[#1e1732]/50 hover:border-[#f1c6ff]/40"
-  } opacity-50 cursor-not-allowed`}
->
-  <User className="w-8 h-8 mx-auto mb-2 text-[#f1c6ff]" />
-  <p className="font-semibold text-[#ffddff]">Participante</p>
-  <p className="text-xs text-[#78767b] mt-1">Asiste a eventos</p>
-</button>
+                <button
+                  type="button"
+                  onClick={() => setAccountType("participant")}
+                  disabled
+                  className={`p-4 rounded-xl border-2 transition-all ${
+                    accountType === "participant"
+                      ? "border-[#f1c6ff] bg-[#f1c6ff]/20"
+                      : "border-[#f1c6ff]/20 bg-[#1e1732]/50 hover:border-[#f1c6ff]/40"
+                  } opacity-50 cursor-not-allowed`}
+                >
+                  <User className="w-8 h-8 mx-auto mb-2 text-[#f1c6ff]" />
+                  <p className="font-semibold text-[#ffddff]">Participante</p>
+                  <p className="text-xs text-[#78767b] mt-1">Asiste a eventos</p>
+                </button>
                 <button
                   type="button"
                   onClick={() => setAccountType("coordinator")}
@@ -303,8 +309,39 @@ export default function RegisterPage() {
                 </div>
               </div>
 
+              {/* Terms and Conditions Checkbox */}
+              <div className="flex items-start space-x-3 p-4 bg-[#1e1732]/30 rounded-lg border border-[#f1c6ff]/20">
+                <div className="flex items-center h-5 mt-0.5">
+                  <input
+                    id="terms"
+                    type="checkbox"
+                    checked={acceptedTerms}
+                    onChange={(e) => setAcceptedTerms(e.target.checked)}
+                    className="w-4 h-4 rounded border-[#f1c6ff]/50 bg-[#1e1732] focus:ring-[#f1c6ff] focus:ring-2"
+                  />
+                </div>
+                <label htmlFor="terms" className="text-sm text-[#e2e2e2] cursor-pointer">
+                  Acepto los{" "}
+                  <Link href="/terminos" className="text-[#f1c6ff] hover:text-[#ffddff] font-semibold transition-colors">
+                    Términos y Condiciones
+                  </Link>{" "}
+                  y la{" "}
+                  <Link href="/privacidad" className="text-[#f1c6ff] hover:text-[#ffddff] font-semibold transition-colors">
+                    Política de Privacidad
+                  </Link>{" "}
+                  de HYPE. 
+                </label>
+              </div>
+
               {/* Submit Button */}
-              <GradientButton type="submit" variant="secondary" className="w-full" loading={loading} size="lg">
+              <GradientButton 
+                type="submit" 
+                variant="secondary" 
+                className="w-full" 
+                loading={loading} 
+                size="lg"
+                disabled={!acceptedTerms}
+              >
                 Crear Cuenta
               </GradientButton>
             </form>

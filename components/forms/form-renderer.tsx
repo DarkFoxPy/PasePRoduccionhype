@@ -23,7 +23,6 @@ interface FormRendererProps {
 
 export function FormRenderer({ fields, eventId, eventEnded, onSubmit }: FormRendererProps) {
   const [formData, setFormData] = useState<Record<string, any>>({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const { toast } = useToast()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -41,7 +40,7 @@ export function FormRenderer({ fields, eventId, eventEnded, onSubmit }: FormRend
       return
     }
 
-    setIsSubmitting(true)
+
 
     try {
       const response = await fetch("/api/form-responses", {
@@ -69,7 +68,7 @@ export function FormRenderer({ fields, eventId, eventEnded, onSubmit }: FormRend
         variant: "destructive",
       })
     } finally {
-      setIsSubmitting(false)
+
     }
   }
 
@@ -85,7 +84,7 @@ export function FormRenderer({ fields, eventId, eventEnded, onSubmit }: FormRend
     <Card className="p-6">
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <h3 className="font-semibold text-lg mb-2">Formulario de registro</h3>
+          <h3 className="font-semibold text-lg mb-2">Previsualización del formulario de registro</h3>
           <p className="text-sm text-muted-foreground">
             Por favor completa la siguiente información para registrarte en el evento.
           </p>
@@ -226,8 +225,8 @@ export function FormRenderer({ fields, eventId, eventEnded, onSubmit }: FormRend
           ))}
         </div>
 
-        <Button type="submit" disabled={isSubmitting || eventEnded} className="w-full">
-          {eventEnded ? "El evento ha finalizado" : isSubmitting ? "Enviando..." : "Enviar formulario"}
+        <Button type="submit" disabled={true} className="w-full">
+        
         </Button>
       </form>
     </Card>

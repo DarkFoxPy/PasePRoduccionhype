@@ -16,15 +16,76 @@ interface RegistrationModalProps {
 export function RegistrationModal({ event, onClose, onSuccess }: RegistrationModalProps) {
   const [loading, setLoading] = useState(false)
   const [step, setStep] = useState(1)
+  const [acceptedTerms, setAcceptedTerms] = useState(false)
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
   })
   const [customAnswers, setCustomAnswers] = useState<Record<string, string>>({})
+  const [errors, setErrors] = useState({
+    email: "",
+    phone: "",
+  })
+
+  // Validación de email
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
+  }
+
+  // Validación de teléfono (solo números, espacios, +, - y paréntesis)
+  const validatePhone = (phone: string) => {
+    const phoneRegex = /^[\d\s+\-()]+$/
+    return phoneRegex.test(phone)
+  }
+
+  // Formatear teléfono para permitir solo caracteres válidos
+  const formatPhone = (input: string) => {
+    return input.replace(/[^\d\s+\-()]/g, '')
+  }
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setFormData({ ...formData, email: value })
+    
+    if (value && !validateEmail(value)) {
+      setErrors({ ...errors, email: "Por favor ingresa un email válido" })
+    } else {
+      setErrors({ ...errors, email: "" })
+    }
+  }
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = formatPhone(e.target.value)
+    setFormData({ ...formData, phone: value })
+    
+    if (value && !validatePhone(value)) {
+      setErrors({ ...errors, phone: "Por favor ingresa solo números y caracteres válidos" })
+    } else {
+      setErrors({ ...errors, phone: "" })
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    if (!acceptedTerms) {
+      alert("Debes aceptar los términos y condiciones para continuar")
+      return
+    }
+
+    // Validaciones finales antes de enviar
+    if (!validateEmail(formData.email)) {
+      setErrors({ ...errors, email: "Por favor ingresa un email válido" })
+      return
+    }
+
+    if (!validatePhone(formData.phone)) {
+      setErrors({ ...errors, phone: "Por favor ingresa un número de teléfono válido" })
+      return
+    }
+
     setLoading(true)
 
     try {
@@ -66,7 +127,6 @@ export function RegistrationModal({ event, onClose, onSuccess }: RegistrationMod
       console.log("[v0] Registration completed successfully with data:", responseData)
 
       setStep(2)
-      // REMOVED: toast.success("Registro exitoso") - Esta línea causaba el "0"
 
       setTimeout(() => {
         onSuccess()
@@ -74,8 +134,7 @@ export function RegistrationModal({ event, onClose, onSuccess }: RegistrationMod
       }, 2000)
     } catch (error: any) {
       console.error("[v0] Error during registration:", error)
-      // REMOVED: toast.error(error.message || "Error al registrarse") - También podría causar el "0"
-      alert(error.message || "Error al registrarse") // Usar alert temporalmente
+      alert(error.message || "Error al registrarse")
     } finally {
       setLoading(false)
     }
@@ -111,22 +170,23 @@ export function RegistrationModal({ event, onClose, onSuccess }: RegistrationMod
           />
         )
 
-      case "select":
-        return (
-          <select
-            required={field.required}
-            value={value}
-            onChange={(e) => setCustomAnswers({ ...customAnswers, [field.id]: e.target.value })}
-            className="w-full px-4 py-3 bg-surface/50 border border-border/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-foreground cursor-pointer"
-          >
-            <option value="">Selecciona una opción</option>
-            {field.options?.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-        )
+case "select":
+  return (
+    <select
+      required={field.required}
+      value={value}
+      onChange={(e) => setCustomAnswers({ ...customAnswers, [field.id]: e.target.value })}
+      className="w-full px-4 py-3 bg-surface/50 border border-border/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-foreground cursor-pointer"
+      style={{ color: 'white' }}
+    >
+      <option value="" style={{ color: 'black' }}>Selecciona una opción</option>
+      {field.options?.map((option) => (
+        <option key={option} value={option} style={{ color: 'black' }}>
+          {option}
+        </option>
+      ))}
+    </select>
+  )
 
       case "radio":
         return (
@@ -209,7 +269,8 @@ export function RegistrationModal({ event, onClose, onSuccess }: RegistrationMod
               <div className="flex items-start justify-between mb-6">
                 <div>
                   <h2 className="text-2xl font-bold text-foreground mb-1">Registrarse al Evento</h2>
-                  <p className="text-sm text-muted">{event.title}</p>
+                  <p className="text-sm text-[#8b6bff]">{event.title}</p>
+
                 </div>
                 <button
                   onClick={onClose}
@@ -245,11 +306,18 @@ export function RegistrationModal({ event, onClose, onSuccess }: RegistrationMod
                       type="email"
                       required
                       value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full pl-10 pr-4 py-3 bg-surface/50 border border-border/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-foreground placeholder:text-muted"
+                      onChange={handleEmailChange}
+                      className={`w-full pl-10 pr-4 py-3 bg-surface/50 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-foreground placeholder:text-muted ${
+                        errors.email ? "border-error" : "border-border/50"
+                      }`}
                       placeholder="tu@email.com"
                     />
                   </div>
+                  {errors.email && (
+                    <p className="text-error text-sm mt-1 flex items-center gap-1">
+                      <span>⚠</span> {errors.email}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -260,11 +328,18 @@ export function RegistrationModal({ event, onClose, onSuccess }: RegistrationMod
                       type="tel"
                       required
                       value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full pl-10 pr-4 py-3 bg-surface/50 border border-border/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-foreground placeholder:text-muted"
+                      onChange={handlePhoneChange}
+                      className={`w-full pl-10 pr-4 py-3 bg-surface/50 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-foreground placeholder:text-muted ${
+                        errors.phone ? "border-error" : "border-border/50"
+                      }`}
                       placeholder="+51 999 999 999"
                     />
                   </div>
+                  {errors.phone && (
+                    <p className="text-error text-sm mt-1 flex items-center gap-1">
+                      <span>⚠</span> {errors.phone}
+                    </p>
+                  )}
                 </div>
 
                 {event.hasCustomForm && event.customFormFields && event.customFormFields.length > 0 && (
@@ -286,7 +361,47 @@ export function RegistrationModal({ event, onClose, onSuccess }: RegistrationMod
                   </>
                 )}
 
-                <GradientButton type="submit" className="w-full" loading={loading} size="lg">
+                {/* Terms and Conditions Checkbox */}
+                <div className="flex items-start space-x-3 p-4 bg-surface/30 rounded-lg border border-border/50">
+                  <div className="flex items-center h-5 mt-0.5">
+                    <input
+                      id="event-terms"
+                      type="checkbox"
+                      checked={acceptedTerms}
+                      onChange={(e) => setAcceptedTerms(e.target.checked)}
+                      className="w-4 h-4 rounded border-primary/50 bg-surface focus:ring-primary focus:ring-2"
+                    />
+                  </div>
+                  <label htmlFor="event-terms" className="text-sm text-foreground cursor-pointer">
+                    Acepto los{" "}
+                    <a 
+                      href="/terminos" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-primary hover:text-primary/80 font-semibold transition-colors"
+                    >
+                      Términos y Condiciones
+                    </a>{" "}
+                    y la{" "}
+                    <a 
+                      href="/privacidad" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-primary hover:text-primary/80 font-semibold transition-colors"
+                    >
+                      Política de Privacidad
+                    </a>{" "}
+                    para participar en este evento. Este checkbox también funciona como medida de seguridad para prevenir registros automatizados.
+                  </label>
+                </div>
+
+                <GradientButton 
+                  type="submit" 
+                  className="w-full" 
+                  loading={loading} 
+                  size="lg"
+                  disabled={!acceptedTerms || errors.email || errors.phone}
+                >
                   Confirmar Registro
                 </GradientButton>
               </form>
@@ -299,7 +414,7 @@ export function RegistrationModal({ event, onClose, onSuccess }: RegistrationMod
                   <Check className="w-10 h-10 text-success" />
                 </div>
                 <h2 className="text-2xl font-bold text-foreground mb-2">Registro Exitoso</h2>
-                <p className="text-muted mb-6">Te hemos enviado un email de confirmación con todos los detalles.</p>
+                <p className="text-muted mb-6">Muchísimas gracias!</p>
                 <GradientButton onClick={onClose} className="w-full">
                   Cerrar
                 </GradientButton>

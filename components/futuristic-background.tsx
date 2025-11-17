@@ -10,14 +10,31 @@ interface FuturisticBackgroundProps {
 
 export function FuturisticBackground({ children }: FuturisticBackgroundProps) {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
+  const [particles, setParticles] = useState<Array<{left: string, top: string, delay: string, duration: string}>>([])
+  const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
+    setIsClient(true)
+    
     const handleMouseMove = (e: MouseEvent) => {
       setMousePos({ x: e.clientX, y: e.clientY })
     }
     window.addEventListener("mousemove", handleMouseMove)
     return () => window.removeEventListener("mousemove", handleMouseMove)
   }, [])
+
+  useEffect(() => {
+    if (isClient) {
+      // Generar partículas solo en el cliente
+      const newParticles = [...Array(30)].map(() => ({
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 100}%`,
+        delay: `${Math.random() * 5}s`,
+        duration: `${3 + Math.random() * 4}s`,
+      }))
+      setParticles(newParticles)
+    }
+  }, [isClient])
 
   return (
     <div className="min-h-screen bg-[#1e1732] text-[#e2e2e2] relative overflow-hidden">
@@ -27,29 +44,31 @@ export function FuturisticBackground({ children }: FuturisticBackgroundProps) {
         <div className="absolute top-1/3 right-1/4 w-[500px] h-[500px] bg-[#ffddff] rounded-full opacity-20 blur-3xl animate-float-delayed" />
         <div className="absolute bottom-1/4 left-1/3 w-[400px] h-[400px] bg-[#f1c6ff] rounded-full opacity-15 blur-3xl animate-float-slow" />
 
-        {/* Starfield Effect */}
-        {[...Array(30)].map((_, i) => (
+        {/* Starfield Effect - Solo en cliente */}
+        {isClient && particles.map((particle, i) => (
           <div
             key={i}
             className="absolute w-1 h-1 bg-[#f1c6ff] rounded-full animate-particle"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 5}s`,
-              animationDuration: `${3 + Math.random() * 4}s`,
+              left: particle.left,
+              top: particle.top,
+              animationDelay: particle.delay,
+              animationDuration: particle.duration,
             }}
           />
         ))}
       </div>
 
-      {/* Cursor Glow */}
-      <div
-        className="fixed w-96 h-96 bg-[#f1c6ff] rounded-full opacity-10 blur-3xl pointer-events-none transition-all duration-300 ease-out z-50"
-        style={{
-          left: mousePos.x - 192,
-          top: mousePos.y - 192,
-        }}
-      />
+      {/* Cursor Glow - Solo en cliente */}
+      {isClient && (
+        <div
+          className="fixed w-96 h-96 bg-[#f1c6ff] rounded-full opacity-10 blur-3xl pointer-events-none transition-all duration-300 ease-out z-50"
+          style={{
+            left: mousePos.x - 192,
+            top: mousePos.y - 192,
+          }}
+        />
+      )}
 
       {/* Content */}
       <div className="relative z-10">{children}</div>

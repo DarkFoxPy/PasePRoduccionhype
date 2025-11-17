@@ -127,9 +127,8 @@ export default function DiscoverPage() {
 
             <nav className="hidden md:flex items-center gap-8">
               {[
-                { label: "Características", href: "#características" },
-                { label: "Cómo Funciona", href: "#cómo-funciona" },
-                { label: "Descubrir", href: "/discover" },
+
+                { label: "Volver a la pagina principal", href: "/" },
               ].map((item, i) => (
                 <Link
                   key={i}
@@ -174,8 +173,7 @@ export default function DiscoverPage() {
             <div className="md:hidden bg-[#1e1732]/98 backdrop-blur-2xl border-t border-[#f1c6ff]/30">
               <div className="container mx-auto px-6 py-6 space-y-4">
                 {[
-                  { label: "Características", href: "#características" },
-                  { label: "Cómo Funciona", href: "#cómo-funciona" },
+
                   { label: "Descubrir", href: "/discover" },
                 ].map((item, i) => (
                   <Link

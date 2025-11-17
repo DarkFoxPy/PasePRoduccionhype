@@ -1163,7 +1163,7 @@ export default function Home() {
     {
       icon: Users,
       title: "Gestión de Invitados",
-      desc: "Administra registros, aprueba solicitudes y visualiza estadísticas en tiempo real de tus asistentes.",
+      desc: "Administra registros, aprueba solicitudes y accede a visualizaciones en tiempo real de tus asistentes.",
       color: "from-[#ffddff] to-[#f1c6ff]",
     },
     {
@@ -1208,7 +1208,7 @@ export default function Home() {
     {
       step: "03",
       title: "Publica y Gestiona",
-      desc: "Comparte tu evento, recibe registros y gestiona invitados desde un dashboard completo con estadísticas en tiempo real.",
+      desc: "Comparte tu evento, recibe registros y gestiona invitados desde un dashboard completo en tiempo real.",
       icon: Zap,
     },
   ]
@@ -1451,14 +1451,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How It Works */}
+
       <section id="cómo-funciona" className="py-24 px-6 relative">
         <div className="absolute inset-0 bg-gradient-to-b from-[#f1c6ff]/5 via-transparent to-[#ffddff]/5" />
         <div className="container mx-auto max-w-5xl relative z-10">
           <div className="text-center mb-20">
-            <h2 className="text-5xl md:text-7xl font-black mb-6 bg-gradient-to-r from-[#f1c6ff] to-[#ffddff] bg-clip-text text-transparent">
-              Tres Pasos Mágicos
-            </h2>
+<h2 className="text-5xl md:text-7xl font-black mb-6 bg-gradient-to-r from-[#f1c6ff] to-[#ffddff] bg-clip-text text-transparent leading-tight md:leading-[1.50]">
+  Tres Pasos Mágicos
+</h2>
+
             <p className="text-[#f1c6ff] text-xl">
               Crea eventos <span className="text-[#f100ff] font-bold">increíbles</span> en minutos
             </p>
@@ -1586,9 +1587,6 @@ export default function Home() {
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-[#f1c6ff] transition-colors">
-                    Blog
-                  </a>
                 </li>
                 <li>
                   <a href="#" className="hover:text-[#f1c6ff] transition-colors">
@@ -1602,18 +1600,13 @@ export default function Home() {
               <h4 className="font-bold mb-4 text-[#e2e2e2]">Legal</h4>
               <ul className="space-y-3 text-[#78767b]">
                 <li>
-                  <a href="#" className="hover:text-[#f1c6ff] transition-colors">
+                  <a href="/privacidad" className="hover:text-[#f1c6ff] transition-colors">
                     Privacidad
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-[#f1c6ff] transition-colors">
+                  <a href="/terminos" className="hover:text-[#f1c6ff] transition-colors">
                     Términos
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-[#f1c6ff] transition-colors">
-                    Cookies
                   </a>
                 </li>
               </ul>
